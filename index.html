@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประกาศผลสอบเข้า ม.1/ม.4</title>
+    <!-- เรียกใช้งาน Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- เรียกใช้งาน Icons (Phosphor Icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- ฟอนต์ Noto Sans Thai -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans Thai', sans-serif; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="min-h-screen bg-[#F0FDF4] text-gray-800 flex flex-col items-center justify-start md:justify-center py-8 px-4 md:p-4 relative overflow-x-hidden">
+
+    <!-- วงกลมตกแต่งฉากหลัง -->
+    <div class="fixed top-[-10%] left-[-10%] w-64 h-64 bg-green-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 z-0 pointer-events-none"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-80 h-80 bg-yellow-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 z-0 pointer-events-none"></div>
+
+    <div class="w-full max-w-4xl bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden z-10 border border-green-50 relative transition-all duration-500">
+        
+        <!-- ส่วนหัว -->
+        <div class="bg-green-600 p-8 text-center relative overflow-hidden">
+            <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-yellow-400 rounded-full opacity-20"></div>
+            <div class="absolute bottom-0 left-0 -mb-8 -ml-8 w-24 h-24 bg-green-400 rounded-full opacity-20"></div>
+            
+            <!-- เปลี่ยนรูปโลโก้โรงเรียนตรงนี้ -->
+            <img src="https://scontent-bkk1-1.xx.fbcdn.net/v/t39.30808-6/558262024_25701077009481513_3037283814763940184_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=f798df&_nc_eui2=AeEjXp3P2DYKzOmm9jExtC8C4jTbqTXIR2_iNNupNchHbwFjC-2vngrOlLA5lzPYeEk&_nc_ohc=swaiegC1gekQ7kNvwG0Etba&_nc_oc=AdnnhKiVuuf81ffTtcqQ6YH6uwehKEDQ1KidIGcx-Kf6-Onua-gV7KABfSQrIq4H0JU&_nc_zt=23&_nc_ht=scontent-bkk1-1.xx&_nc_gid=gjrXyDVKoHwGOyPqB67lGw&_nc_ss=8&oh=00_AfxuyuIlLAiQCvLUdCOQWvYiv8sVfK8aPCYbMZO8yMsjvQ&oe=69BF2127" alt="โลโก้โรงเรียน" class="w-20 h-20 object-contain mx-auto mb-3 rounded-full border-2 border-white/20 shadow-sm bg-white">
+            
+            <h1 class="text-3xl font-bold text-white mb-2 tracking-wide">ประกาศผลสอบเข้า</h1>
+            <p class="text-green-100 font-medium">ระดับชั้นมัธยมศึกษาปีที่ 1 และ 4</p>
+        </div>
+
+        <div class="p-6 md:p-8">
+            <!-- ฟอร์มค้นหา -->
+            <div id="searchFormWrapper" class="max-w-md mx-auto">
+                <form id="searchForm" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผู้เข้าสอบ</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="ph ph-user text-xl text-green-500"></i>
+                            </div>
+                            <input type="text" id="examId" required
+                                class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors bg-gray-50 outline-none"
+                                placeholder="กรอกรหัสผู้เข้าสอบ 5 หลัก">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน <span class="text-xs text-gray-500 font-normal">(เลขประจำตัวประชาชน)</span></label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="ph ph-lock-key text-xl text-green-500"></i>
+                            </div>
+                            <input type="password" id="idCard" required
+                                class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors bg-gray-50 outline-none"
+                                placeholder="เลขประจำตัวประชาชน 13 หลัก">
+                        </div>
+                    </div>
+
+                    <div id="errorMessage" class="hidden p-3 bg-red-50 border border-red-100 text-red-600 rounded-xl text-sm text-center"></div>
+
+                    <button type="submit" id="submitBtn"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-base font-bold text-green-900 bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 transition-all mt-6 disabled:opacity-50">
+                        ตรวจสอบผลคะแนน
+                    </button>
+                </form>
+            </div>
+
+            <!-- หน้าแสดงผลลัพธ์ แนวนอน/แนวตั้งตามขนาดจอ -->
+            <div id="resultSection" class="hidden fade-in">
+                <div class="flex flex-col md:flex-row gap-8 items-stretch">
+                    
+                    <!-- ด้านซ้าย: ข้อมูลผู้เข้าสอบ -->
+                    <div class="w-full md:w-1/3 flex flex-col items-center justify-center text-center p-6 bg-green-50 rounded-2xl border border-green-100">
+                        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-white mb-4 border-4 border-green-100 shadow-sm">
+                            <i class="ph ph-user text-5xl text-green-600"></i>
+                        </div>
+                        <h2 id="resName" class="text-xl font-bold text-gray-800 mb-1">-</h2>
+                        <div class="flex flex-col items-center text-sm text-gray-500 gap-1">
+                            <span class="flex items-center gap-1.5"><i class="ph ph-buildings text-green-500"></i><span id="resSchool">โรงเรียน: -</span></span>
+                        </div>
+                        <div class="mt-5 inline-block px-4 py-1.5 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold border border-yellow-200 shadow-sm" id="resExamId">
+                            รหัสสอบ: -
+                        </div>
+                        
+                        <button type="button" onclick="resetForm()"
+                            class="mt-8 w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-green-200 rounded-xl text-sm font-medium text-green-700 bg-white hover:bg-green-100 transition-colors">
+                            <i class="ph ph-caret-left"></i> ค้นหาข้อมูลอื่น
+                        </button>
+                    </div>
+
+                    <!-- ด้านขวา: คะแนนสอบ -->
+                    <div class="w-full md:w-2/3 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-base font-semibold text-gray-700 uppercase tracking-wider flex items-center gap-2 border-b-2 border-gray-100 pb-3 mb-5">
+                                <i class="ph ph-exam text-green-500 text-xl"></i> รายละเอียดคะแนนสอบ
+                            </h3>
+                            
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:border-green-300 transition-colors">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-500"><i class="ph ph-flask text-lg"></i></div>
+                                        <p class="text-sm text-gray-500 font-medium">วิทยาศาสตร์</p>
+                                    </div>
+                                    <p id="resSci" class="text-2xl font-bold text-gray-800 text-right">-</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:border-green-300 transition-colors">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500"><i class="ph ph-calculator text-lg"></i></div>
+                                        <p class="text-sm text-gray-500 font-medium">คณิตศาสตร์</p>
+                                    </div>
+                                    <p id="resMath" class="text-2xl font-bold text-gray-800 text-right">-</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:border-green-300 transition-colors">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-500"><i class="ph ph-translate text-lg"></i></div>
+                                        <p class="text-sm text-gray-500 font-medium">อังกฤษ</p>
+                                    </div>
+                                    <p id="resEng" class="text-2xl font-bold text-gray-800 text-right">-</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:border-green-300 transition-colors">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-500"><i class="ph ph-book-bookmark text-lg"></i></div>
+                                        <p class="text-sm text-gray-500 font-medium">ภาษาไทย</p>
+                                    </div>
+                                    <p id="resThai" class="text-2xl font-bold text-gray-800 text-right">-</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:border-green-300 transition-colors">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="w-8 h-8 rounded-full bg-teal-50 flex items-center justify-center text-teal-500"><i class="ph ph-globe-hemisphere-west text-lg"></i></div>
+                                        <p class="text-sm text-gray-500 font-medium">สังคมศึกษา</p>
+                                    </div>
+                                    <p id="resSocial" class="text-2xl font-bold text-gray-800 text-right">-</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- กล่องสรุปคะแนนรวม -->
+                        <div class="mt-6 bg-gradient-to-r from-green-600 to-green-500 p-6 rounded-2xl shadow-md text-white flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-white/20 rounded-lg"><i class="ph ph-trophy text-2xl text-yellow-300"></i></div>
+                                <div class="text-green-50 font-medium text-lg">คะแนนรวมทั้งหมด</div>
+                            </div>
+                            <div id="resOverall" class="text-4xl font-black drop-shadow-md">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <p class="mt-6 text-sm text-gray-400 z-10 font-medium pb-8 md:pb-0"><i class="ph ph-check-circle inline align-middle"></i> ระบบตรวจสอบผลคะแนนอัตโนมัติ</p>
+
+    <!-- Script ติดต่อกับ Google Apps Script -->
+    <script>
+        // 📌📌📌 นำ URL ของ Apps Script (ที่ลงท้ายด้วย /exec) มาใส่ตรงนี้ครับ 📌📌📌
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxSisShRcN5yQrN_F9_5G_ijZVXaInCQCJBq2lZn_ukDxq5ANkli6IazaVMC1idCB7O/exec"; 
+
+        const searchFormWrapper = document.getElementById('searchFormWrapper');
+        const searchForm = document.getElementById('searchForm');
+        const resultSection = document.getElementById('resultSection');
+        const errorMessage = document.getElementById('errorMessage');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // เหตุการณ์เมื่อกดปุ่มค้นหา
+        searchForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            errorMessage.classList.add('hidden');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="ph ph-spinner animate-spin mr-2"></i> กำลังค้นหา...';
+
+            const examId = document.getElementById('examId').value;
+            const idCard = document.getElementById('idCard').value;
+
+            try {
+                // ส่งข้อมูลไปถาม Google Apps Script
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // ป้องกัน CORS error
+                    body: JSON.stringify({ examId: examId, idCard: idCard })
+                });
+
+                // รับผลลัพธ์กลับมา
+                const data = await response.json();
+                onSuccess(data);
+
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                onFailure(error);
+            }
+        });
+
+        // เมื่อทำงานสำเร็จ ได้รับข้อมูลจากฐานข้อมูล
+        function onSuccess(response) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'ตรวจสอบผลคะแนน';
+
+            if (response.status === 'success') {
+                const data = response.data;
+                // อัปเดตข้อมูลลงหน้าเว็บ
+                document.getElementById('resName').textContent = `${data.prefix}${data.name} ${data.sur}`;
+                document.getElementById('resSchool').textContent = `${data.school}`;
+                document.getElementById('resExamId').textContent = `รหัสสอบ: ${data.examid}`;
+                document.getElementById('resSci').textContent = data.sci;
+                document.getElementById('resMath').textContent = data.math;
+                document.getElementById('resEng').textContent = data.eng;
+                document.getElementById('resThai').textContent = data.thai;
+                document.getElementById('resSocial').textContent = data.social;
+                document.getElementById('resOverall').textContent = data.overall;
+
+                // สลับหน้าแสดงผล
+                searchFormWrapper.classList.add('hidden');
+                resultSection.classList.remove('hidden');
+                
+                // เลื่อนหน้าจอกลับไปด้านบนสุด (มีประโยชน์ในมือถือ)
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                showError(response.message);
+            }
+        }
+
+        // เมื่อเกิดข้อผิดพลาดในการเชื่อมต่อเครือข่าย
+        function onFailure(error) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'ตรวจสอบผลคะแนน';
+            showError("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่อีกครั้ง");
+        }
+
+        // แสดงข้อความ Error สีแดง
+        function showError(msg) {
+            errorMessage.textContent = msg;
+            errorMessage.classList.remove('hidden');
+        }
+
+        // ปุ่มย้อนกลับไปหน้าค้นหา
+        function resetForm() {
+            document.getElementById('examId').value = '';
+            document.getElementById('idCard').value = '';
+            errorMessage.classList.add('hidden');
+            
+            resultSection.classList.add('hidden');
+            searchFormWrapper.classList.remove('hidden');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

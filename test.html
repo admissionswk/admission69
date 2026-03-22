@@ -120,9 +120,9 @@ export default function App() {
   });
 
   return (
-    // เปลี่ยนพื้นหลังเป็นรูปพระอินทร์ทรงช้างเอราวัณ + ไล่สีโทนเขียว-ทอง
+    // ปรับให้ใช้ฟอนต์ Sarabun ทั่วทั้งหน้าเว็บ
     <div 
-      className="min-h-screen p-4 md:p-8 font-sans bg-green-900 bg-fixed bg-center bg-cover print:bg-white print:p-0"
+      className="min-h-screen p-4 md:p-8 font-sarabun bg-green-900 bg-fixed bg-center bg-cover print:bg-white print:p-0"
       style={{ 
         backgroundImage: `linear-gradient(to bottom right, rgba(6, 78, 59, 0.85), rgba(180, 83, 9, 0.75)), url('/indra-erawan-bg.jpg')`, // เปลี่ยน URL ตรงนี้เป็นรูปจริงได้เลย
         backgroundBlendMode: 'overlay'
@@ -130,17 +130,17 @@ export default function App() {
     >
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
         
-        {/* เลนซ้าย: ฟอร์มกรอกข้อมูล (ซ่อนตอนพิมพ์) ปรับเป็นสไตล์ Minimal Glassmorphism */}
+        {/* เลนซ้าย: ฟอร์มกรอกข้อมูล (ซ่อนตอนพิมพ์) */}
         <div className="w-full lg:w-1/3 bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl border border-yellow-500/30 p-8 print:hidden overflow-y-auto max-h-[90vh] custom-scrollbar">
-          <h2 className="text-2xl font-bold text-green-800 mb-8 flex items-center gap-3 border-b border-yellow-500/30 pb-4">
+          <h2 className="text-[22pt] font-bold text-green-800 mb-8 flex items-center gap-3 border-b border-yellow-500/30 pb-4">
             <FileText className="text-yellow-600 w-8 h-8" />
             ระบบขออนุมัติแผนงาน
           </h2>
 
-          <div className="space-y-6">
+          <div className="space-y-6 text-[14pt]">
             {/* 1. ประเภท & กลุ่มงาน */}
             <div className="space-y-3">
-              <label className="block text-sm font-semibold text-green-900">มีความประสงค์เพื่อ</label>
+              <label className="block font-semibold text-green-900">มีความประสงค์เพื่อ</label>
               <div className="flex gap-4">
                 {['จัดซื้อ', 'จัดจ้าง', 'เบิกจ่ายเงิน'].map(type => (
                   <label key={type} className="flex items-center gap-2 cursor-pointer group">
@@ -159,12 +159,12 @@ export default function App() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-green-900 mb-2">1. กลุ่มบริหารงาน/กลุ่มสาระ/งาน *</label>
+              <label className="block font-semibold text-green-900 mb-2">1. กลุ่มบริหารงาน/กลุ่มสาระ/งาน *</label>
               <select 
                 name="department" 
                 value={formData.department} 
                 onChange={handleInputChange} 
-                className="w-full p-2.5 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900"
+                className="w-full p-2.5 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900 font-sarabun text-[14pt]"
               >
                 <option value="">-- เลือกกลุ่มบริหารงาน --</option>
                 {departments.map(d => <option key={d} value={d}>{d}</option>)}
@@ -174,12 +174,12 @@ export default function App() {
             {/* 2. & 5. กิจกรรม โครงการ และ งบประมาณ */}
             <div className="p-5 bg-gradient-to-br from-green-50 to-yellow-50/50 rounded-xl border border-green-100 shadow-sm space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-green-900 mb-2">2. เลือกกิจกรรม/โครงการ *</label>
+                <label className="block font-semibold text-green-900 mb-2">2. เลือกกิจกรรม/โครงการ *</label>
                 <select 
                   name="activityId" 
                   value={formData.activityId} 
                   onChange={handleInputChange} 
-                  className="w-full p-2.5 bg-white border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900"
+                  className="w-full p-2.5 bg-white border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900 font-sarabun text-[14pt]"
                 >
                   <option value="">-- เลือกกิจกรรมจากแผน --</option>
                   {projectsData.map(p => (
@@ -191,7 +191,7 @@ export default function App() {
               </div>
               
               {selectedProjectInfo && (
-                <div className="text-sm text-green-800 bg-white/60 p-3 rounded-lg border border-green-100">
+                <div className="text-green-800 bg-white/60 p-3 rounded-lg border border-green-100">
                   <p className="mb-1"><strong className="text-yellow-700">โครงการที่:</strong> {selectedProjectInfo.projectId}</p>
                   <p><strong className="text-yellow-700">งบประมาณที่ได้รับจัดสรร:</strong> {(selectedProjectInfo.budget).toLocaleString()} บาท</p>
                 </div>
@@ -200,30 +200,30 @@ export default function App() {
 
             {/* 3. รายละเอียด */}
             <div>
-              <label className="block text-sm font-semibold text-green-900 mb-2">3. กิจกรรมย่อย (อธิบายรายละเอียด) *</label>
+              <label className="block font-semibold text-green-900 mb-2">3. กิจกรรมย่อย (อธิบายรายละเอียด) *</label>
               <textarea 
                 name="subActivity" 
                 value={formData.subActivity} 
                 onChange={handleInputChange} 
                 rows="3" 
                 placeholder="ระบุว่าจะจัดซื้อ จัดจ้าง หรือเบิกจ่ายอะไร..." 
-                className="w-full p-3 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900 resize-none"
+                className="w-full p-3 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900 resize-none font-sarabun text-[14pt]"
               ></textarea>
             </div>
 
             {/* 4. จำนวนเงิน */}
             <div>
-              <label className="block text-sm font-semibold text-green-900 mb-2">4. จำนวนเงินทั้งสิ้น (บาท) *</label>
+              <label className="block font-semibold text-green-900 mb-2">4. จำนวนเงินทั้งสิ้น (บาท) *</label>
               <input 
                 type="number" 
                 name="amount" 
                 value={formData.amount} 
                 onChange={handleInputChange} 
                 placeholder="ตัวเลขงบประมาณ" 
-                className="w-full p-2.5 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900" 
+                className="w-full p-2.5 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900 font-sarabun text-[14pt]" 
               />
               {formData.amount && (
-                <p className="mt-2 text-sm text-yellow-600 font-medium bg-yellow-50 p-2 rounded-md border border-yellow-100">({amountText})</p>
+                <p className="mt-2 text-yellow-600 font-medium bg-yellow-50 p-2 rounded-md border border-yellow-100">({amountText})</p>
               )}
             </div>
 
@@ -231,14 +231,14 @@ export default function App() {
 
             {/* 6, 7, 8 ผู้รับผิดชอบและกรรมการ */}
             <div>
-              <label className="block text-sm font-semibold text-green-900 mb-2">6. ผู้รับผิดชอบโครงการ *</label>
+              <label className="block font-semibold text-green-900 mb-2">6. ผู้รับผิดชอบโครงการ *</label>
               <input 
                 type="text" 
                 name="managerName" 
                 value={formData.managerName} 
                 onChange={handleInputChange} 
                 placeholder="ชื่อ-สกุล" 
-                className="w-full p-2.5 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900" 
+                className="w-full p-2.5 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900 font-sarabun text-[14pt]" 
               />
             </div>
 
@@ -251,43 +251,43 @@ export default function App() {
                   onChange={handleInputChange} 
                   className="w-4 h-4 text-yellow-600 border-green-300 rounded focus:ring-yellow-500" 
                 />
-                <span className="text-sm font-semibold text-green-900">7. มีคณะกรรมการตรวจรับพัสดุ (ถ้ามี)</span>
+                <span className="font-semibold text-green-900">7. มีคณะกรรมการตรวจรับพัสดุ (ถ้ามี)</span>
               </label>
               
               {formData.hasCommittee && (
                 <div className="space-y-3 pl-7 mt-3">
-                  <input type="text" name="committeePresident" value={formData.committeePresident} onChange={handleInputChange} placeholder="ประธานกรรมการ" className="w-full p-2 text-sm bg-white border border-green-200 rounded-md focus:ring-1 focus:ring-yellow-500" />
-                  <input type="text" name="committee1" value={formData.committee1} onChange={handleInputChange} placeholder="กรรมการคนที่ 1" className="w-full p-2 text-sm bg-white border border-green-200 rounded-md focus:ring-1 focus:ring-yellow-500" />
-                  <input type="text" name="committee2" value={formData.committee2} onChange={handleInputChange} placeholder="กรรมการคนที่ 2 (ถ้ามี)" className="w-full p-2 text-sm bg-white border border-green-200 rounded-md focus:ring-1 focus:ring-yellow-500" />
+                  <input type="text" name="committeePresident" value={formData.committeePresident} onChange={handleInputChange} placeholder="ประธานกรรมการ" className="w-full p-2 bg-white border border-green-200 rounded-md focus:ring-1 focus:ring-yellow-500 font-sarabun text-[14pt]" />
+                  <input type="text" name="committee1" value={formData.committee1} onChange={handleInputChange} placeholder="กรรมการคนที่ 1" className="w-full p-2 bg-white border border-green-200 rounded-md focus:ring-1 focus:ring-yellow-500 font-sarabun text-[14pt]" />
+                  <input type="text" name="committee2" value={formData.committee2} onChange={handleInputChange} placeholder="กรรมการคนที่ 2 (ถ้ามี)" className="w-full p-2 bg-white border border-green-200 rounded-md focus:ring-1 focus:ring-yellow-500 font-sarabun text-[14pt]" />
                 </div>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-green-900 mb-2">8. หัวหน้ากลุ่มบริหารงาน (ผู้อนุมัติ) *</label>
+              <label className="block font-semibold text-green-900 mb-2">8. หัวหน้ากลุ่มบริหารงาน (ผู้อนุมัติ) *</label>
               <input 
                 type="text" 
                 name="headName" 
                 value={formData.headName} 
                 onChange={handleInputChange} 
                 placeholder="ชื่อ-สกุล" 
-                className="w-full p-2.5 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900" 
+                className="w-full p-2.5 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900 font-sarabun text-[14pt]" 
               />
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-4 pt-6 border-t border-yellow-500/30">
+            <div className="flex gap-4 pt-6 border-t border-yellow-500/30 font-sarabun">
               <button 
                 onClick={handleSubmitToSheet}
                 disabled={isSubmitting}
-                className="flex-1 bg-green-700 hover:bg-green-800 text-yellow-50 py-3 px-4 rounded-xl flex justify-center items-center gap-2 font-medium shadow-lg shadow-green-900/20 transition-all transform hover:-translate-y-0.5"
+                className="flex-1 bg-green-700 hover:bg-green-800 text-yellow-50 py-3 px-4 rounded-xl flex justify-center items-center gap-2 font-medium shadow-lg shadow-green-900/20 transition-all transform hover:-translate-y-0.5 text-[16pt]"
               >
                 {isSubmitting ? <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-400"></span> : <Save size={20} className="text-yellow-400" />}
                 บันทึกข้อมูล
               </button>
               <button 
                 onClick={handlePrint}
-                className="flex-1 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white py-3 px-4 rounded-xl flex justify-center items-center gap-2 font-medium shadow-lg shadow-yellow-900/20 transition-all transform hover:-translate-y-0.5"
+                className="flex-1 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white py-3 px-4 rounded-xl flex justify-center items-center gap-2 font-medium shadow-lg shadow-yellow-900/20 transition-all transform hover:-translate-y-0.5 text-[16pt]"
               >
                 <Printer size={20} />
                 สร้าง PDF
@@ -297,7 +297,7 @@ export default function App() {
             {submitSuccess && (
               <div className="p-4 bg-green-50/90 backdrop-blur-sm border border-green-200 text-green-800 rounded-xl flex items-center gap-3 animate-fade-in shadow-sm">
                 <CheckCircle2 size={24} className="text-green-600" /> 
-                <span className="font-medium">บันทึกข้อมูลลงระบบเรียบร้อยแล้ว!</span>
+                <span className="font-medium text-[14pt]">บันทึกข้อมูลลงระบบเรียบร้อยแล้ว!</span>
               </div>
             )}
           </div>
@@ -306,39 +306,39 @@ export default function App() {
         {/* เลนขวา: พรีวิวเอกสาร A4 (จะแสดงเต็มจอตอนสั่งพิมพ์) */}
         <div className="w-full lg:w-2/3 flex justify-center overflow-auto print:w-full print:block print:overflow-visible">
           
-          {/* กระดาษ A4 */}
-          <div className="bg-white shadow-2xl print:shadow-none w-[210mm] min-h-[297mm] p-[20mm] text-gray-900 font-serif leading-relaxed text-[15pt]">
+          {/* กระดาษ A4 ตั้งค่าฟอนต์ 16pt มาตรฐานสารบรรณ */}
+          <div className="bg-white shadow-2xl print:shadow-none w-[210mm] min-h-[297mm] p-[20mm] text-gray-900 font-sarabun leading-relaxed text-[16pt]">
             
             {/* หัวเอกสารตราครุฑ (จำลอง) */}
             <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 border-2 border-gray-800 rounded-full flex items-center justify-center font-bold text-xs">
+              <div className="w-16 h-16 border-2 border-gray-800 rounded-full flex items-center justify-center font-bold text-[12pt]">
                 ตราครุฑ
               </div>
             </div>
             
-            <h1 className="text-center font-bold text-2xl mb-8">บันทึกข้อความ</h1>
+            <h1 className="text-center font-bold text-[24pt] mb-8">บันทึกข้อความ</h1>
 
             <div className="flex mb-2">
               <div className="w-1/2">
-                <span className="font-bold">ส่วนราชการ</span> โรงเรียนสุรวิทยาคาร อำเภอเมือง จังหวัดสุรินทร์
+                <span className="font-bold text-[20pt]">ส่วนราชการ</span> โรงเรียนสุรวิทยาคาร อำเภอเมือง จังหวัดสุรินทร์
               </div>
             </div>
             
             <div className="flex mb-4">
               <div className="w-1/2">
-                <span className="font-bold">ที่</span> ............................................
+                <span className="font-bold text-[20pt]">ที่</span> ............................................
               </div>
               <div className="w-1/2">
-                <span className="font-bold">วันที่</span> {currentDateText}
+                <span className="font-bold text-[20pt]">วันที่</span> {currentDateText}
               </div>
             </div>
 
             <div className="mb-4 flex items-start">
-              <span className="font-bold w-16 shrink-0">เรื่อง</span>
+              <span className="font-bold text-[20pt] w-[80px] shrink-0">เรื่อง</span>
               <p>
                 ขออนุมัติงบประมาณเพื่อเป็นค่าใช้จ่ายในการดำเนินงาน 
                 {['จัดซื้อ', 'จัดจ้าง', 'เบิกจ่ายเงิน'].map(type => (
-                  <span key={type} className="mx-1">
+                  <span key={type} className="mx-1 whitespace-nowrap">
                     ({formData.requestType === type ? '✓' : ' '}) {type}
                   </span>
                 ))}
@@ -347,15 +347,15 @@ export default function App() {
             </div>
 
             <div className="mb-6 flex">
-              <span className="font-bold w-16 shrink-0">เรียน</span>
+              <span className="font-bold text-[20pt] w-[80px] shrink-0">เรียน</span>
               <span>ผู้อำนวยการโรงเรียนสุรวิทยาคาร</span>
             </div>
 
             {/* เนื้อหาจดหมาย */}
-            <div className="indent-10 text-justify mb-4">
+            <div className="indent-[2.5cm] text-justify mb-4">
               ด้วย {formData.department ? ` ${formData.department} ` : '........................................................'} มีความประสงค์ขออนุมัติใช้งบประมาณเพื่อเป็นค่าใช้จ่ายในการดำเนินงาน 
               {['จัดซื้อ', 'จัดจ้าง', 'เบิกจ่ายเงิน'].map(type => (
-                  <span key={type} className="mx-1">
+                  <span key={type} className="mx-1 whitespace-nowrap">
                     ({formData.requestType === type ? '✓' : ' '}) {type}
                   </span>
               ))} 
@@ -370,7 +370,7 @@ export default function App() {
               รายละเอียด/กิจกรรมย่อย: {formData.subActivity || '........................................................................................................................................................'}
             </div>
 
-            <div className="indent-10 text-justify mb-8">
+            <div className="indent-[2.5cm] text-justify mb-8">
               ซึ่งได้รับจัดสรรงบประมาณตามแผนปฏิบัติการประจำปีงบประมาณ 2569 เป็นจำนวนเงิน {(selectedProjectInfo?.budget || 0).toLocaleString()} บาท จึงขอใช้งบประมาณครั้งนี้ เป็นจำนวนเงินทั้งสิ้น {(parseFloat(formData.amount) || 0).toLocaleString()} บาท ({amountText || '...................................................'}) ตามรายละเอียดที่แนบมาพร้อมนี้
             </div>
 
@@ -378,7 +378,7 @@ export default function App() {
             {formData.hasCommittee && (
               <div className="mb-8">
                 <p className="mb-2">คณะกรรมการตรวจรับพัสดุ/ผู้ตรวจรับพัสดุ ดังนี้</p>
-                <ol className="list-decimal list-inside pl-4">
+                <ol className="list-decimal list-inside pl-4 space-y-1">
                   {formData.committeePresident && <li>{formData.committeePresident} (ประธานกรรมการ)</li>}
                   {formData.committee1 && <li>{formData.committee1} (กรรมการ)</li>}
                   {formData.committee2 && <li>{formData.committee2} (กรรมการ)</li>}
@@ -388,15 +388,15 @@ export default function App() {
 
             {/* ลายเซ็น */}
             <div className="flex flex-col items-end mt-16 pr-10">
-              <div className="text-center w-64">
+              <div className="text-center w-[8cm]">
                 <p className="mb-4">ลงชื่อ .....................................................</p>
                 <p>({formData.managerName || '.....................................................'})</p>
                 <p>ผู้รับผิดชอบโครงการ/กิจกรรม</p>
               </div>
             </div>
 
-            <div className="flex flex-col items-end mt-16 pr-10">
-              <div className="text-center w-64">
+            <div className="flex flex-col items-end mt-12 pr-10">
+              <div className="text-center w-[8cm]">
                 <p className="mb-4">ลงชื่อ .....................................................</p>
                 <p>({formData.headName || '.....................................................'})</p>
                 <p>หัวหน้ากลุ่มบริหารงาน</p>
@@ -408,7 +408,14 @@ export default function App() {
 
       </div>
 
+      {/* นำเข้าฟอนต์ Sarabun ผ่าน Google Fonts และกำหนดสไตล์เพิ่มเติม */}
       <style dangerouslySetInnerHTML={{__html: `
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        
+        .font-sarabun {
+          font-family: 'Sarabun', sans-serif;
+        }
+
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
         }

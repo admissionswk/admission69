@@ -1,443 +1,559 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Printer, Save, FileText, CheckCircle2 } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบแผนงานและเบิกจ่ายงบประมาณ ปี 2569</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Noto Sans Thai', sans-serif; background-color: #f3f4f6; }
+        .page-hidden { display: none !important; }
+        .table-input { width: 100%; border: none; background: transparent; outline: none; text-align: center;}
+        .table-input:focus { border-bottom: 1px solid #3b82f6; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden text-gray-800">
 
-// --- ฐานข้อมูลจำลอง (ดึงจากไฟล์ project.csv ที่แนบมา) ---
-const projectsData = [
-  { projectId: "1", projectName: "ค่าหนังสือเรียน 1/69", activityId: "1", activityName: "ค่าหนังสือเรียน 1/69", budget: 3940787 },
-  { projectId: "2", projectName: "ค่าอุปกรณ์การเรียน 2/68", activityId: "2", activityName: "ค่าอุปกรณ์การเรียน 2/68", budget: 848640 },
-  { projectId: "3", projectName: "ค่าอุปกรณ์การเรียน  1/69", activityId: "3", activityName: "ค่าอุปกรณ์การเรียน  1/69", budget: 925600 },
-  { projectId: "4", projectName: "ค่าเครื่องแบบนักเรียน 1/69", activityId: "4", activityName: "ค่าเครื่องแบบนักเรียน 1/69", budget: 1861200 },
-  { projectId: "5", projectName: "พัฒนาประสิทธิภาพการบริหารจัดการตามนโยบายของหน่วยงานต้นสังกัด", activityId: "5.1", activityName: "การบริหารจัดการตามนโยบายและจุดเน้นของหน่วยงานต้นสังกัด", budget: 445920 },
-  { projectId: "5", projectName: "พัฒนาประสิทธิภาพการบริหารจัดการตามนโยบายของหน่วยงานต้นสังกัด", activityId: "5.2", activityName: "การแก้ปัญหาเชิงบูรณาการ", budget: 0 },
-  { projectId: "8", projectName: "โครงการส่งเสริมและพัฒนาวิชาการ", activityId: "8.4", activityName: "สนับสนุนค่าใช้จ่ายในการจัดการศึกษาขั้นพื้นฐาน(งบอุดหนุน-กิจกรรมพัฒนาผู้เรียน)", budget: 5052710 },
-];
-
-const departments = [
-  "กลุ่มบริหารวิชาการ", "กลุ่มบริหารงบประมาณ", "กลุ่มบริหารงานบุคคล", "กลุ่มบริหารทั่วไป",
-  "กลุ่มสาระวิทยาศาสตร์และเทคโนโลยี", "กลุ่มสาระคณิตศาสตร์", "กลุ่มสาระภาษาต่างประเทศ"
-];
-
-// --- ฟังก์ชันแปลงตัวเลขเป็นตัวหนังสือ (Thai Baht Text) ---
-const THBText = (amount) => {
-  if (!amount || isNaN(amount)) return "";
-  let number = Math.abs(amount).toFixed(2).toString();
-  const integerPart = number.split('.')[0];
-  const decimalPart = number.split('.')[1];
-  
-  const textNumbers = ["ศูนย์", "หนึ่ง", "สอง", "สาม", "สี่", "ห้า", "หก", "เจ็ด", "แปด", "เก้า"];
-  const textUnits = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
-  
-  const convertText = (str) => {
-    let result = "";
-    for (let i = 0; i < str.length; i++) {
-      const digit = parseInt(str[i]);
-      const position = str.length - 1 - i;
-      if (digit !== 0) {
-        if (position === 1 && digit === 1) {
-          result += "สิบ";
-        } else if (position === 1 && digit === 2) {
-          result += "ยี่สิบ";
-        } else if (position === 0 && digit === 1 && str.length > 1 && str[str.length-2] !== '0') {
-          result += "เอ็ด";
-        } else {
-          result += textNumbers[digit] + textUnits[position];
-        }
-      }
-    }
-    return result;
-  };
-
-  let thaiText = convertText(integerPart) + "บาท";
-  if (decimalPart === "00") {
-    thaiText += "ถ้วน";
-  } else {
-    thaiText += convertText(decimalPart) + "สตางค์";
-  }
-  return thaiText;
-};
-
-export default function App() {
-  const [formData, setFormData] = useState({
-    requestType: 'จัดซื้อ',
-    department: '',
-    activityId: '',
-    subActivity: '',
-    amount: '',
-    managerName: '',
-    hasCommittee: false,
-    committeePresident: '',
-    committee1: '',
-    committee2: '',
-    headName: ''
-  });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-
-  const selectedProjectInfo = useMemo(() => {
-    return projectsData.find(p => p.activityId === formData.activityId) || null;
-  }, [formData.activityId]);
-
-  const amountText = useMemo(() => {
-    return THBText(parseFloat(formData.amount));
-  }, [formData.amount]);
-
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
-
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const handleSubmitToSheet = () => {
-    setIsSubmitting(true);
-    const payload = {
-      ...formData,
-      projectId: selectedProjectInfo?.projectId || '',
-      projectName: selectedProjectInfo?.projectName || '',
-      activityName: selectedProjectInfo?.activityName || '',
-      allocatedBudget: selectedProjectInfo?.budget || 0,
-      amountText: amountText,
-      timestamp: new Date().toISOString()
-    };
-
-    console.log("Data to send to Google Sheets:", payload);
-    
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitSuccess(true);
-      setTimeout(() => setSubmitSuccess(false), 3000);
-    }, 1500);
-  };
-
-  const currentDateText = new Date().toLocaleDateString('th-TH', {
-    year: 'numeric', month: 'long', day: 'numeric'
-  });
-
-  return (
-    // ปรับให้ใช้ฟอนต์ Sarabun ทั่วทั้งหน้าเว็บ
-    <div 
-      className="min-h-screen p-4 md:p-8 font-sarabun bg-green-900 bg-fixed bg-center bg-cover print:bg-white print:p-0"
-      style={{ 
-        backgroundImage: `linear-gradient(to bottom right, rgba(6, 78, 59, 0.85), rgba(180, 83, 9, 0.75)), url('/indra-erawan-bg.jpg')`, // เปลี่ยน URL ตรงนี้เป็นรูปจริงได้เลย
-        backgroundBlendMode: 'overlay'
-      }}
-    >
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
-        
-        {/* เลนซ้าย: ฟอร์มกรอกข้อมูล (ซ่อนตอนพิมพ์) */}
-        <div className="w-full lg:w-1/3 bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl border border-yellow-500/30 p-8 print:hidden overflow-y-auto max-h-[90vh] custom-scrollbar">
-          <h2 className="text-[22pt] font-bold text-green-800 mb-8 flex items-center gap-3 border-b border-yellow-500/30 pb-4">
-            <FileText className="text-yellow-600 w-8 h-8" />
-            ระบบขออนุมัติแผนงาน
-          </h2>
-
-          <div className="space-y-6 text-[14pt]">
-            {/* 1. ประเภท & กลุ่มงาน */}
-            <div className="space-y-3">
-              <label className="block font-semibold text-green-900">มีความประสงค์เพื่อ</label>
-              <div className="flex gap-4">
-                {['จัดซื้อ', 'จัดจ้าง', 'เบิกจ่ายเงิน'].map(type => (
-                  <label key={type} className="flex items-center gap-2 cursor-pointer group">
-                    <input 
-                      type="radio" 
-                      name="requestType" 
-                      value={type} 
-                      checked={formData.requestType === type} 
-                      onChange={handleInputChange} 
-                      className="w-4 h-4 text-yellow-600 border-green-300 focus:ring-yellow-500" 
-                    />
-                    <span className="text-green-800 group-hover:text-green-600 transition-colors">{type}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 text-white flex flex-col hidden md:flex shrink-0">
+        <div class="p-6 flex items-center gap-3 border-b border-slate-700">
+            <i data-lucide="school" class="w-8 h-8 text-blue-400"></i>
             <div>
-              <label className="block font-semibold text-green-900 mb-2">1. กลุ่มบริหารงาน/กลุ่มสาระ/งาน *</label>
-              <select 
-                name="department" 
-                value={formData.department} 
-                onChange={handleInputChange} 
-                className="w-full p-2.5 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900 font-sarabun text-[14pt]"
-              >
-                <option value="">-- เลือกกลุ่มบริหารงาน --</option>
-                {departments.map(d => <option key={d} value={d}>{d}</option>)}
-              </select>
+                <h1 class="text-lg font-bold">EduBudget</h1>
+                <p class="text-xs text-slate-400">โรงเรียนสุรวิทยาคาร</p>
             </div>
-
-            {/* 2. & 5. กิจกรรม โครงการ และ งบประมาณ */}
-            <div className="p-5 bg-gradient-to-br from-green-50 to-yellow-50/50 rounded-xl border border-green-100 shadow-sm space-y-4">
-              <div>
-                <label className="block font-semibold text-green-900 mb-2">2. เลือกกิจกรรม/โครงการ *</label>
-                <select 
-                  name="activityId" 
-                  value={formData.activityId} 
-                  onChange={handleInputChange} 
-                  className="w-full p-2.5 bg-white border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900 font-sarabun text-[14pt]"
-                >
-                  <option value="">-- เลือกกิจกรรมจากแผน --</option>
-                  {projectsData.map(p => (
-                    <option key={p.activityId} value={p.activityId}>
-                      {p.activityId} - {p.activityName} (โครงการ: {p.projectName})
-                    </option>
-                  ))}
-                </select>
-              </div>
-              
-              {selectedProjectInfo && (
-                <div className="text-green-800 bg-white/60 p-3 rounded-lg border border-green-100">
-                  <p className="mb-1"><strong className="text-yellow-700">โครงการที่:</strong> {selectedProjectInfo.projectId}</p>
-                  <p><strong className="text-yellow-700">งบประมาณที่ได้รับจัดสรร:</strong> {(selectedProjectInfo.budget).toLocaleString()} บาท</p>
-                </div>
-              )}
+        </div>
+        <nav class="flex-1 p-4 space-y-2">
+            <a href="#" onclick="switchPage('dashboard')" id="nav-dashboard" class="flex items-center gap-3 p-3 bg-blue-600 rounded-lg text-white transition">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i> ภาพรวม (Dashboard)
+            </a>
+            <a href="#" onclick="switchPage('approval-form')" id="nav-form" class="flex items-center gap-3 p-3 hover:bg-slate-800 text-slate-300 hover:text-white rounded-lg transition">
+                <i data-lucide="file-signature" class="w-5 h-5"></i> ขออนุมัติจัดซื้อ/จัดจ้าง
+            </a>
+        </nav>
+        <div class="p-4 border-t border-slate-700">
+            <div class="flex items-center gap-3 p-2 text-slate-300 w-full">
+                <div class="w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center font-bold">ผอ.</div>
+                <div class="text-sm">ผู้บริหารสถานศึกษา</div>
             </div>
+        </div>
+    </aside>
 
-            {/* 3. รายละเอียด */}
-            <div>
-              <label className="block font-semibold text-green-900 mb-2">3. กิจกรรมย่อย (อธิบายรายละเอียด) *</label>
-              <textarea 
-                name="subActivity" 
-                value={formData.subActivity} 
-                onChange={handleInputChange} 
-                rows="3" 
-                placeholder="ระบุว่าจะจัดซื้อ จัดจ้าง หรือเบิกจ่ายอะไร..." 
-                className="w-full p-3 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900 resize-none font-sarabun text-[14pt]"
-              ></textarea>
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+        <!-- Header -->
+        <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
+            <div class="flex items-center gap-3">
+                <button class="md:hidden"><i data-lucide="menu"></i></button>
+                <h2 id="page-title" class="text-xl font-bold text-gray-800">ภาพรวมการเบิกจ่ายงบประมาณ ปี 2569</h2>
             </div>
-
-            {/* 4. จำนวนเงิน */}
-            <div>
-              <label className="block font-semibold text-green-900 mb-2">4. จำนวนเงินทั้งสิ้น (บาท) *</label>
-              <input 
-                type="number" 
-                name="amount" 
-                value={formData.amount} 
-                onChange={handleInputChange} 
-                placeholder="ตัวเลขงบประมาณ" 
-                className="w-full p-2.5 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900 font-sarabun text-[14pt]" 
-              />
-              {formData.amount && (
-                <p className="mt-2 text-yellow-600 font-medium bg-yellow-50 p-2 rounded-md border border-yellow-100">({amountText})</p>
-              )}
+            <div class="flex items-center gap-4">
+                <span class="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium flex items-center gap-1">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i> พร้อมเชื่อมต่อระบบ
+                </span>
             </div>
+        </header>
 
-            <div className="h-px bg-gradient-to-r from-transparent via-green-200 to-transparent my-6"></div>
-
-            {/* 6, 7, 8 ผู้รับผิดชอบและกรรมการ */}
-            <div>
-              <label className="block font-semibold text-green-900 mb-2">6. ผู้รับผิดชอบโครงการ *</label>
-              <input 
-                type="text" 
-                name="managerName" 
-                value={formData.managerName} 
-                onChange={handleInputChange} 
-                placeholder="ชื่อ-สกุล" 
-                className="w-full p-2.5 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900 font-sarabun text-[14pt]" 
-              />
-            </div>
-
-            <div className="bg-white/50 p-4 rounded-xl border border-green-100 transition-all">
-              <label className="flex items-center gap-3 cursor-pointer mb-3">
-                <input 
-                  type="checkbox" 
-                  name="hasCommittee" 
-                  checked={formData.hasCommittee} 
-                  onChange={handleInputChange} 
-                  className="w-4 h-4 text-yellow-600 border-green-300 rounded focus:ring-yellow-500" 
-                />
-                <span className="font-semibold text-green-900">7. มีคณะกรรมการตรวจรับพัสดุ (ถ้ามี)</span>
-              </label>
-              
-              {formData.hasCommittee && (
-                <div className="space-y-3 pl-7 mt-3">
-                  <input type="text" name="committeePresident" value={formData.committeePresident} onChange={handleInputChange} placeholder="ประธานกรรมการ" className="w-full p-2 bg-white border border-green-200 rounded-md focus:ring-1 focus:ring-yellow-500 font-sarabun text-[14pt]" />
-                  <input type="text" name="committee1" value={formData.committee1} onChange={handleInputChange} placeholder="กรรมการคนที่ 1" className="w-full p-2 bg-white border border-green-200 rounded-md focus:ring-1 focus:ring-yellow-500 font-sarabun text-[14pt]" />
-                  <input type="text" name="committee2" value={formData.committee2} onChange={handleInputChange} placeholder="กรรมการคนที่ 2 (ถ้ามี)" className="w-full p-2 bg-white border border-green-200 rounded-md focus:ring-1 focus:ring-yellow-500 font-sarabun text-[14pt]" />
-                </div>
-              )}
-            </div>
-
-            <div>
-              <label className="block font-semibold text-green-900 mb-2">8. หัวหน้ากลุ่มบริหารงาน (ผู้อนุมัติ) *</label>
-              <input 
-                type="text" 
-                name="headName" 
-                value={formData.headName} 
-                onChange={handleInputChange} 
-                placeholder="ชื่อ-สกุล" 
-                className="w-full p-2.5 bg-white/70 border border-green-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-green-900 font-sarabun text-[14pt]" 
-              />
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-4 pt-6 border-t border-yellow-500/30 font-sarabun">
-              <button 
-                onClick={handleSubmitToSheet}
-                disabled={isSubmitting}
-                className="flex-1 bg-green-700 hover:bg-green-800 text-yellow-50 py-3 px-4 rounded-xl flex justify-center items-center gap-2 font-medium shadow-lg shadow-green-900/20 transition-all transform hover:-translate-y-0.5 text-[16pt]"
-              >
-                {isSubmitting ? <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-400"></span> : <Save size={20} className="text-yellow-400" />}
-                บันทึกข้อมูล
-              </button>
-              <button 
-                onClick={handlePrint}
-                className="flex-1 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white py-3 px-4 rounded-xl flex justify-center items-center gap-2 font-medium shadow-lg shadow-yellow-900/20 transition-all transform hover:-translate-y-0.5 text-[16pt]"
-              >
-                <Printer size={20} />
-                สร้าง PDF
-              </button>
+        <!-- ================= PAGE 1: DASHBOARD ================= -->
+        <div id="page-dashboard" class="p-6 space-y-6">
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded shadow-sm">
+                <h3 class="font-bold text-blue-800">งบประมาณเงินอุดหนุน ปี 2569</h3>
+                <p class="text-sm text-blue-600 mt-1">สรุปการเบิกจ่ายงบประมาณแยกตามประเภท (รอเชื่อมต่อกับ Sheet Summary)</p>
             </div>
             
-            {submitSuccess && (
-              <div className="p-4 bg-green-50/90 backdrop-blur-sm border border-green-200 text-green-800 rounded-xl flex items-center gap-3 animate-fade-in shadow-sm">
-                <CheckCircle2 size={24} className="text-green-600" /> 
-                <span className="font-medium text-[14pt]">บันทึกข้อมูลลงระบบเรียบร้อยแล้ว!</span>
-              </div>
-            )}
-          </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <p class="text-sm text-gray-500 font-medium">จัดการเรียนการสอน</p>
+                    <h3 class="text-xl font-bold mt-1">125,000 <span class="text-sm font-normal text-gray-500">บาท</span></h3>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5 mt-3"><div class="bg-blue-500 h-1.5 rounded-full" style="width: 45%"></div></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <p class="text-sm text-gray-500 font-medium">กิจกรรมพัฒนาผู้เรียน</p>
+                    <h3 class="text-xl font-bold mt-1">54,000 <span class="text-sm font-normal text-gray-500">บาท</span></h3>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5 mt-3"><div class="bg-emerald-500 h-1.5 rounded-full" style="width: 20%"></div></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex items-center justify-center">
+                    <button onclick="switchPage('approval-form')" class="flex flex-col items-center text-blue-600 hover:text-blue-800 transition">
+                        <i data-lucide="plus-circle" class="w-8 h-8 mb-2"></i>
+                        <span class="font-medium">สร้างเรื่องขออนุมัติใหม่</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
-        {/* เลนขวา: พรีวิวเอกสาร A4 (จะแสดงเต็มจอตอนสั่งพิมพ์) */}
-        <div className="w-full lg:w-2/3 flex justify-center overflow-auto print:w-full print:block print:overflow-visible">
-          
-          {/* กระดาษ A4 ตั้งค่าฟอนต์ 16pt มาตรฐานสารบรรณ */}
-          <div className="bg-white shadow-2xl print:shadow-none w-[210mm] min-h-[297mm] p-[20mm] text-gray-900 font-sarabun leading-relaxed text-[16pt]">
-            
-            {/* หัวเอกสารตราครุฑ (จำลอง) */}
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 border-2 border-gray-800 rounded-full flex items-center justify-center font-bold text-[12pt]">
-                ตราครุฑ
-              </div>
-            </div>
-            
-            <h1 className="text-center font-bold text-[24pt] mb-8">บันทึกข้อความ</h1>
+        <!-- ================= PAGE 2: APPROVAL FORM ================= -->
+        <div id="page-approval-form" class="p-6 page-hidden">
+            <div class="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+                
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 mx-auto mb-2 opacity-80 flex items-center justify-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Garuda_Krut_Pha.svg/150px-Garuda_Krut_Pha.svg.png" alt="ตราครุฑ" class="h-full object-contain">
+                    </div>
+                    <h2 class="text-2xl font-bold">บันทึกข้อความ</h2>
+                    <p class="text-gray-600 mt-1">ขออนุมัติงบประมาณเพื่อเป็นค่าใช้จ่ายในการดำเนินงาน ตามแผนปฏิบัติการประจำปีงบประมาณ 2569</p>
+                </div>
 
-            <div className="flex mb-2">
-              <div className="w-1/2">
-                <span className="font-bold text-[20pt]">ส่วนราชการ</span> โรงเรียนสุรวิทยาคาร อำเภอเมือง จังหวัดสุรินทร์
-              </div>
-            </div>
-            
-            <div className="flex mb-4">
-              <div className="w-1/2">
-                <span className="font-bold text-[20pt]">ที่</span> ............................................
-              </div>
-              <div className="w-1/2">
-                <span className="font-bold text-[20pt]">วันที่</span> {currentDateText}
-              </div>
-            </div>
+                <form id="purchaseForm" class="space-y-8">
+                    <!-- ส่วนที่ 1: ข้อมูลเบื้องต้น -->
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 space-y-6">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">กลุ่มบริหารงาน / กลุ่มสาระ / งาน</label>
+                                <input type="text" id="department" class="w-full border-gray-300 rounded-md p-2 border focus:ring-blue-500 focus:border-blue-500" value="โรงเรียนสุรวิทยาคาร" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">วันที่ทำรายการ</label>
+                                <input type="date" id="docDate" class="w-full border-gray-300 rounded-md p-2 border focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                        </div>
 
-            <div className="mb-4 flex items-start">
-              <span className="font-bold text-[20pt] w-[80px] shrink-0">เรื่อง</span>
-              <p>
-                ขออนุมัติงบประมาณเพื่อเป็นค่าใช้จ่ายในการดำเนินงาน 
-                {['จัดซื้อ', 'จัดจ้าง', 'เบิกจ่ายเงิน'].map(type => (
-                  <span key={type} className="mx-1 whitespace-nowrap">
-                    ({formData.requestType === type ? '✓' : ' '}) {type}
-                  </span>
-                ))}
-                ตามแผนปฏิบัติการประจำปีงบประมาณ 2569
-              </p>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">มีความประสงค์เพื่อ (เลือก 1 อย่าง)</label>
+                            <div class="flex flex-wrap gap-6 bg-white p-3 rounded border border-gray-200">
+                                <label class="flex items-center gap-2 cursor-pointer font-medium"><input type="radio" name="requestType" value="ขอจัดซื้อ" class="w-4 h-4 text-blue-600" required> ( ) จัดซื้อ</label>
+                                <label class="flex items-center gap-2 cursor-pointer font-medium"><input type="radio" name="requestType" value="ขอจัดจ้าง" class="w-4 h-4 text-blue-600"> ( ) จัดจ้าง</label>
+                                <label class="flex items-center gap-2 cursor-pointer font-medium"><input type="radio" name="requestType" value="ขอเบิกจ่ายเงิน" class="w-4 h-4 text-blue-600"> ( ) เบิกจ่ายเงิน</label>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-1">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">ตามโครงการที่</label>
+                                <input type="text" id="projectId" class="w-full border-gray-300 rounded-md p-2 border focus:ring-blue-500" placeholder="รหัสโครงการ">
+                            </div>
+                            <div class="md:col-span-3">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">ชื่อโครงการ</label>
+                                <input type="text" id="projectName" class="w-full border-gray-300 rounded-md p-2 border focus:ring-blue-500" placeholder="ระบุชื่อโครงการ..." required>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-1">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">กิจกรรมที่</label>
+                                <input type="text" id="activityId" class="w-full border-gray-300 rounded-md p-2 border focus:ring-blue-500" placeholder="รหัสกิจกรรม">
+                            </div>
+                            <div class="md:col-span-3">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">ชื่อกิจกรรม</label>
+                                <input type="text" id="mainActivity" class="w-full border-gray-300 rounded-md p-2 border focus:ring-blue-500" placeholder="ระบุชื่อกิจกรรม..." required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">งบที่ได้รับจัดสรรตามแผนปฏิบัติการ ปี 2569</label>
+                            <div class="relative">
+                                <input type="number" id="allocatedBudget" class="w-full border-gray-300 rounded-md p-2 pl-4 pr-12 border focus:ring-blue-500 text-blue-700 font-bold" placeholder="ระบุจำนวนเงินจัดสรร (ดึงจาก Sheet)" required>
+                                <span class="absolute right-4 top-2 text-gray-500">บาท</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">* กรอกตัวเลขงบประมาณที่ได้รับจัดสรรสำหรับกิจกรรมนี้</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">กิจกรรมย่อย</label>
+                            <textarea id="subActivity" rows="2" class="w-full border-gray-300 rounded-md p-2 border focus:ring-blue-500" placeholder="อธิบายรายละเอียดคร่าวๆว่าจะจัดซื้อ จัดจ้าง หรือ เบิกจ่ายเงิน..."></textarea>
+                            <p class="text-xs text-gray-500 mt-1">หมายถึง ให้ผู้ใช้อธิบายรายละเอียดคร่าวๆว่า จะจัดซื้อ จัดจ้าง หรือ เบิกจ่ายเงิน ทำอะไรบ้าง</p>
+                        </div>
+                    </div>
+
+                    <!-- ส่วนที่ 2: แหล่งงบประมาณ -->
+                    <div class="bg-blue-50 p-6 rounded-lg border border-blue-200">
+                        <h3 class="text-lg font-bold text-blue-800 mb-4 flex items-center gap-2">
+                            <i data-lucide="coins"></i> แหล่งงบประมาณ (ระบุประเภทเงิน)
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-3 border-b border-blue-200 pb-2">1. ประเภทเงินอุดหนุน</h4>
+                                <div class="space-y-3">
+                                    <label class="flex items-start gap-3 cursor-pointer">
+                                        <input type="radio" name="budgetSource" value="อุดหนุนจัดการเรียนการสอน" class="mt-1 w-4 h-4 text-blue-600" required> 
+                                        <span class="text-sm">อุดหนุนจัดการเรียนการสอน</span>
+                                    </label>
+                                    <label class="flex items-start gap-3 cursor-pointer">
+                                        <input type="radio" name="budgetSource" value="อุดหนุนกิจกรรมพัฒนาผู้เรียน" class="mt-1 w-4 h-4 text-blue-600"> 
+                                        <span class="text-sm">อุดหนุนกิจกรรมพัฒนาผู้เรียน</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-3 border-b border-blue-200 pb-2">2. ประเภทเงินรายได้สถานศึกษา</h4>
+                                <div class="space-y-3">
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="radio" name="budgetSource" value="เงินรายได้สถานศึกษา" class="w-4 h-4 text-blue-600"> 
+                                        <span class="text-sm">เงินรายได้สถานศึกษา</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="radio" name="budgetSource" value="เงินบำรุงการศึกษา" class="w-4 h-4 text-blue-600"> 
+                                        <span class="text-sm">เงินบำรุงการศึกษา</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="radio" name="budgetSource" value="เงินอื่นๆ" class="w-4 h-4 text-blue-600"> 
+                                        <span class="text-sm">เงินอื่นๆ (บริจาค/หน่วยงานอื่น)</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ส่วนที่ 3: รายการพัสดุ -->
+                    <div>
+                        <div class="flex justify-between items-end mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                <i data-lucide="shopping-cart"></i> รายละเอียดการขอซื้อ/ขอจ้าง/เบิกจ่าย
+                            </h3>
+                            <button type="button" onclick="addItemRow()" class="text-sm bg-gray-800 text-white px-3 py-1.5 rounded hover:bg-gray-700 flex items-center gap-1">
+                                <i data-lucide="plus" class="w-4 h-4"></i> เพิ่มรายการ
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto border border-gray-300 rounded-lg">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-100 text-gray-700">
+                                    <tr>
+                                        <th class="p-3 text-center border-b w-12">ลำดับ</th>
+                                        <th class="p-3 border-b">รายละเอียดพัสดุที่จะซื้อ/จ้าง</th>
+                                        <th class="p-3 text-center border-b w-24">จำนวน</th>
+                                        <th class="p-3 text-center border-b w-24">หน่วยนับ</th>
+                                        <th class="p-3 text-right border-b w-32">ราคา/หน่วย</th>
+                                        <th class="p-3 text-right border-b w-32">จำนวนเงิน</th>
+                                        <th class="p-3 text-center border-b w-12">ลบ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="itemTableBody" class="divide-y divide-gray-200">
+                                    <!-- Rows added via JS -->
+                                </tbody>
+                                <tfoot>
+                                    <tr class="bg-gray-50 font-bold border-t-2 border-gray-300">
+                                        <td colspan="5" class="p-3 text-right border-t">จำนวนเงินทั้งสิ้น</td>
+                                        <td class="p-3 text-right border-t text-blue-700 text-lg" id="grandTotalText">0.00</td>
+                                        <td class="border-t text-center text-gray-500">บาท</td>
+                                    </tr>
+                                    <tr class="bg-gray-100 font-medium">
+                                        <td colspan="7" class="p-3 text-center text-blue-800">
+                                            (<span id="grandTotalThaiText">ศูนย์บาทถ้วน</span>)
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ส่วนที่ 4: ผู้รับผิดชอบ และ คณะกรรมการ -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- ผู้เสนอขออนุมัติ -->
+                        <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm space-y-4">
+                            <h3 class="text-base font-bold text-gray-800 border-b pb-2">ผู้เสนอขออนุมัติ</h3>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">ลงชื่อ ผู้รับผิดชอบโครงการ/กิจกรรม</label>
+                                <input type="text" id="responsibleName" class="w-full border-gray-300 rounded-md p-2 border focus:ring-blue-500" placeholder="ชื่อ-นามสกุล..." required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">อีเมลสำหรับรับแจ้งเตือน PDF (ตัวเลือก)</label>
+                                <input type="email" id="responsibleEmail" class="w-full border-gray-300 rounded-md p-2 border focus:ring-blue-500" placeholder="example@gmail.com">
+                            </div>
+                            <div class="pt-2">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">หัวหน้ากลุ่มบริหารงาน / กลุ่มสาระ ที่จะอนุมัติ</label>
+                                <input type="text" id="headOfDepartment" class="w-full border-gray-300 rounded-md p-2 border focus:ring-blue-500" placeholder="ชื่อหัวหน้ากลุ่มฯ..." required>
+                            </div>
+                        </div>
+
+                        <!-- คณะกรรมการ -->
+                        <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 shadow-sm space-y-4">
+                            <h3 class="text-base font-bold text-gray-800 border-b pb-2">
+                                (ถ้ามี) คณะกรรมการตรวจรับพัสดุ/ผู้ตรวจรับพัสดุ
+                            </h3>
+                            <p class="text-xs text-gray-500">ประธานกรรมการ/ผู้ตรวจรับพัสดุ และกรรมการ ไม่เกิน 2 คน</p>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-medium w-16">ประธานฯ</span>
+                                <input type="text" id="committee1" class="flex-1 border-gray-300 rounded-md p-2 border focus:ring-blue-500 text-sm" placeholder="ชื่อ-นามสกุล">
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-medium w-16">กรรมการ 1</span>
+                                <input type="text" id="committee2" class="flex-1 border-gray-300 rounded-md p-2 border focus:ring-blue-500 text-sm" placeholder="ชื่อ-นามสกุล">
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-medium w-16">กรรมการ 2</span>
+                                <input type="text" id="committee3" class="flex-1 border-gray-300 rounded-md p-2 border focus:ring-blue-500 text-sm" placeholder="ชื่อ-นามสกุล">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Buttons -->
+                    <div class="flex justify-end gap-4 pt-6 border-t border-gray-200">
+                        <button type="button" onclick="switchPage('dashboard')" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
+                            ยกเลิก
+                        </button>
+                        <button type="button" onclick="submitFormToGAS()" id="submitBtn" class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-bold flex items-center gap-2 transition shadow-md text-lg">
+                            <i data-lucide="send" class="w-5 h-5"></i> ส่งเรื่องขออนุมัติ
+                        </button>
+                    </div>
+                </form>
+
+                <!-- UI Message Box (Success State) -->
+                <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white p-8 rounded-xl shadow-lg text-center max-w-md w-full mx-4">
+                        <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="check" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">ส่งเรื่องสำเร็จ!</h3>
+                        <p class="text-gray-600 text-sm mb-4">ข้อมูลถูกบันทึกลง Google Sheets และสร้าง PDF เรียบร้อยแล้ว</p>
+                        <div class="bg-blue-50 p-4 rounded text-sm mb-6 text-left break-all border border-blue-100">
+                            <span class="font-bold text-blue-800 flex items-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> ลิงก์เอกสาร PDF:</span>
+                            <a href="#" id="pdfDownloadLink" target="_blank" class="text-blue-600 hover:text-blue-800 underline block mt-2 font-medium">คลิกที่นี่เพื่อเปิดดูเอกสาร PDF</a>
+                        </div>
+                        <button onclick="closeModal()" class="w-full bg-gray-800 text-white py-2 rounded-lg font-medium hover:bg-gray-900 transition">กลับสู่หน้าหลัก</button>
+                    </div>
+                </div>
+
             </div>
-
-            <div className="mb-6 flex">
-              <span className="font-bold text-[20pt] w-[80px] shrink-0">เรียน</span>
-              <span>ผู้อำนวยการโรงเรียนสุรวิทยาคาร</span>
-            </div>
-
-            {/* เนื้อหาจดหมาย */}
-            <div className="indent-[2.5cm] text-justify mb-4">
-              ด้วย {formData.department ? ` ${formData.department} ` : '........................................................'} มีความประสงค์ขออนุมัติใช้งบประมาณเพื่อเป็นค่าใช้จ่ายในการดำเนินงาน 
-              {['จัดซื้อ', 'จัดจ้าง', 'เบิกจ่ายเงิน'].map(type => (
-                  <span key={type} className="mx-1 whitespace-nowrap">
-                    ({formData.requestType === type ? '✓' : ' '}) {type}
-                  </span>
-              ))} 
-              ตามโครงการที่ {selectedProjectInfo ? selectedProjectInfo.projectId : '...............'} ชื่อโครงการ {selectedProjectInfo ? selectedProjectInfo.projectName : '........................................................................................'}
-            </div>
-
-            <div className="mb-4">
-              กิจกรรมที่ {selectedProjectInfo ? selectedProjectInfo.activityId : '...............'} ชื่อกิจกรรม {selectedProjectInfo ? selectedProjectInfo.activityName : '........................................................................................'}
-            </div>
-
-            <div className="mb-4 text-justify">
-              รายละเอียด/กิจกรรมย่อย: {formData.subActivity || '........................................................................................................................................................'}
-            </div>
-
-            <div className="indent-[2.5cm] text-justify mb-8">
-              ซึ่งได้รับจัดสรรงบประมาณตามแผนปฏิบัติการประจำปีงบประมาณ 2569 เป็นจำนวนเงิน {(selectedProjectInfo?.budget || 0).toLocaleString()} บาท จึงขอใช้งบประมาณครั้งนี้ เป็นจำนวนเงินทั้งสิ้น {(parseFloat(formData.amount) || 0).toLocaleString()} บาท ({amountText || '...................................................'}) ตามรายละเอียดที่แนบมาพร้อมนี้
-            </div>
-
-            {/* ส่วนกรรมการตรวจรับ */}
-            {formData.hasCommittee && (
-              <div className="mb-8">
-                <p className="mb-2">คณะกรรมการตรวจรับพัสดุ/ผู้ตรวจรับพัสดุ ดังนี้</p>
-                <ol className="list-decimal list-inside pl-4 space-y-1">
-                  {formData.committeePresident && <li>{formData.committeePresident} (ประธานกรรมการ)</li>}
-                  {formData.committee1 && <li>{formData.committee1} (กรรมการ)</li>}
-                  {formData.committee2 && <li>{formData.committee2} (กรรมการ)</li>}
-                </ol>
-              </div>
-            )}
-
-            {/* ลายเซ็น */}
-            <div className="flex flex-col items-end mt-16 pr-10">
-              <div className="text-center w-[8cm]">
-                <p className="mb-4">ลงชื่อ .....................................................</p>
-                <p>({formData.managerName || '.....................................................'})</p>
-                <p>ผู้รับผิดชอบโครงการ/กิจกรรม</p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-end mt-12 pr-10">
-              <div className="text-center w-[8cm]">
-                <p className="mb-4">ลงชื่อ .....................................................</p>
-                <p>({formData.headName || '.....................................................'})</p>
-                <p>หัวหน้ากลุ่มบริหารงาน</p>
-              </div>
-            </div>
-
-          </div>
         </div>
+    </main>
 
-      </div>
+    <script>
+        // ==========================================
+        // 🚀 ตั้งค่า URL ของ Web App จาก Google Apps Script ที่นี่
+        // ==========================================
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwtzegEe39Dgrs3UoraxL8HcXS2LVj1mdfuTozJHPT7dqtlePkdXGS0fRGv6lRMDe35/exec"; 
 
-      {/* นำเข้าฟอนต์ Sarabun ผ่าน Google Fonts และกำหนดสไตล์เพิ่มเติม */}
-      <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
-        
-        .font-sarabun {
-          font-family: 'Sarabun', sans-serif;
+        // เริ่มต้นไอคอน
+        lucide.createIcons();
+        document.getElementById('docDate').valueAsDate = new Date();
+
+        // ฟังก์ชันเปลี่ยนหน้า
+        function switchPage(pageId) {
+            document.getElementById('page-dashboard').classList.add('page-hidden');
+            document.getElementById('page-approval-form').classList.add('page-hidden');
+            document.getElementById('nav-dashboard').className = "flex items-center gap-3 p-3 hover:bg-slate-800 text-slate-300 hover:text-white rounded-lg transition";
+            document.getElementById('nav-form').className = "flex items-center gap-3 p-3 hover:bg-slate-800 text-slate-300 hover:text-white rounded-lg transition";
+
+            if(pageId === 'dashboard') {
+                document.getElementById('page-dashboard').classList.remove('page-hidden');
+                document.getElementById('nav-dashboard').className = "flex items-center gap-3 p-3 bg-blue-600 rounded-lg text-white transition";
+                document.getElementById('page-title').innerText = "ภาพรวมการเบิกจ่ายงบประมาณ ปี 2569";
+            } else if (pageId === 'approval-form') {
+                document.getElementById('page-approval-form').classList.remove('page-hidden');
+                document.getElementById('nav-form').className = "flex items-center gap-3 p-3 bg-blue-600 rounded-lg text-white transition";
+                document.getElementById('page-title').innerText = "สร้างบันทึกข้อความขออนุมัติ";
+                if(rowCount === 0) addItemRow();
+            }
         }
 
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
+        // ระบบตารางคำนวณเงิน
+        let rowCount = 0;
+        let grandTotalValue = 0;
+
+        function addItemRow() {
+            rowCount++;
+            const tbody = document.getElementById('itemTableBody');
+            const tr = document.createElement('tr');
+            tr.id = `row-${rowCount}`;
+            
+            tr.innerHTML = `
+                <td class="p-2 border-b text-center text-gray-500 seq-num">${rowCount}</td>
+                <td class="p-2 border-b"><input type="text" class="item-desc w-full border border-gray-200 rounded p-1.5 focus:border-blue-500 outline-none text-sm" placeholder="ระบุรายการ..." required></td>
+                <td class="p-2 border-b"><input type="number" min="1" class="item-qty w-full border border-gray-200 rounded p-1.5 text-center focus:border-blue-500 outline-none text-sm" value="1" oninput="calculateTotal()"></td>
+                <td class="p-2 border-b"><input type="text" class="item-unit w-full border border-gray-200 rounded p-1.5 text-center focus:border-blue-500 outline-none text-sm" placeholder="เช่น ชุด" required></td>
+                <td class="p-2 border-b"><input type="number" min="0" step="0.01" class="item-price w-full border border-gray-200 rounded p-1.5 text-right focus:border-blue-500 outline-none text-sm" value="0" oninput="calculateTotal()"></td>
+                <td class="p-2 border-b text-right font-medium text-gray-700 row-total-text">0.00</td>
+                <td class="p-2 border-b text-center">
+                    <button type="button" onclick="removeRow(${rowCount})" class="text-red-500 hover:bg-red-50 p-1 rounded transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            lucide.createIcons();
+            reindexRows();
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
+
+        function removeRow(id) {
+            const row = document.getElementById(`row-${id}`);
+            if (row) { row.remove(); reindexRows(); calculateTotal(); }
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(234, 179, 8, 0.5);
-          border-radius: 10px;
+
+        function reindexRows() {
+            const rows = document.getElementById('itemTableBody').children;
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].id = `row-${i + 1}`;
+                rows[i].querySelector('.seq-num').innerText = i + 1;
+                rows[i].querySelector('button').setAttribute('onclick', `removeRow(${i + 1})`);
+            }
+            rowCount = rows.length;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(234, 179, 8, 0.8);
+
+        // แปลงตัวเลขเป็นตัวหนังสือภาษาไทย (Thai Baht Text)
+        function getThaiBahtText(number) {
+            if (number === 0 || !number) return "ศูนย์บาทถ้วน";
+            let str = Number(number).toFixed(2).toString();
+            const numArr = ["ศูนย์", "หนึ่ง", "สอง", "สาม", "สี่", "ห้า", "หก", "เจ็ด", "แปด", "เก้า"];
+            const digitArr = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
+            
+            let parts = str.split(".");
+            let baht = parts[0];
+            let satang = parts[1];
+            let result = "";
+
+            // คำนวณฝั่งบาท
+            let bahtText = "";
+            for (let i = 0; i < baht.length; i++) {
+                let digit = parseInt(baht.charAt(i));
+                let pos = baht.length - i - 1;
+                if (digit !== 0) {
+                    if (pos === 1 && digit === 1) { bahtText += "สิบ"; } 
+                    else if (pos === 1 && digit === 2) { bahtText += "ยี่สิบ"; } 
+                    else if (pos === 0 && digit === 1 && baht.length > 1 && baht.charAt(baht.length-2) !== "0") { bahtText += "เอ็ด"; } 
+                    else { bahtText += numArr[digit] + digitArr[pos]; }
+                }
+            }
+            result += bahtText ? bahtText + "บาท" : "";
+
+            // คำนวณฝั่งสตางค์
+            if (satang === "00") {
+                result += "ถ้วน";
+            } else {
+                let satangText = "";
+                for (let i = 0; i < satang.length; i++) {
+                    let digit = parseInt(satang.charAt(i));
+                    let pos = satang.length - i - 1;
+                    if (digit !== 0) {
+                        if (pos === 1 && digit === 1) { satangText += "สิบ"; } 
+                        else if (pos === 1 && digit === 2) { satangText += "ยี่สิบ"; } 
+                        else if (pos === 0 && digit === 1 && satang.charAt(0) !== "0") { satangText += "เอ็ด"; } 
+                        else { satangText += numArr[digit] + digitArr[pos]; }
+                    }
+                }
+                result += satangText + "สตางค์";
+            }
+            return result;
         }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
+
+        function calculateTotal() {
+            const rows = document.getElementById('itemTableBody').children;
+            grandTotalValue = 0;
+
+            for (let row of rows) {
+                const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                const total = qty * price;
+                row.querySelector('.row-total-text').innerText = total.toLocaleString('en-US', {minimumFractionDigits: 2});
+                grandTotalValue += total;
+            }
+            
+            // อัปเดตตัวเลข
+            document.getElementById('grandTotalText').innerText = grandTotalValue.toLocaleString('en-US', {minimumFractionDigits: 2});
+            // อัปเดตตัวหนังสือภาษาไทย
+            document.getElementById('grandTotalThaiText').innerText = getThaiBahtText(grandTotalValue);
         }
-        .animate-fade-in {
-          animation: fadeIn 0.3s ease-out forwards;
+
+        // ==========================================
+        // ฟังก์ชันเชื่อมต่อกับ Google Apps Script (Backend)
+        // ==========================================
+        function submitFormToGAS() {
+            const btn = document.getElementById('submitBtn');
+            const originalHTML = btn.innerHTML;
+
+            // 1. รวบรวมข้อมูลรายการพัสดุ
+            const items = [];
+            const rows = document.getElementById('itemTableBody').children;
+            for (let row of rows) {
+                const desc = row.querySelector('.item-desc').value;
+                if(desc) {
+                    items.push({
+                        description: desc,
+                        qty: row.querySelector('.item-qty').value,
+                        unit: row.querySelector('.item-unit').value,
+                        price: row.querySelector('.item-price').value,
+                        total: (row.querySelector('.item-qty').value * row.querySelector('.item-price').value)
+                    });
+                }
+            }
+
+            // 2. ตรวจสอบข้อมูลบังคับ
+            const reqType = document.querySelector('input[name="requestType"]:checked');
+            const bgSource = document.querySelector('input[name="budgetSource"]:checked');
+            
+            if(!reqType || !bgSource || items.length === 0) {
+                alert("กรุณากรอกข้อมูลสำคัญ (ประเภท, แหล่งงบประมาณ, รายการพัสดุ) ให้ครบถ้วน");
+                return;
+            }
+
+            if(WEB_APP_URL === "ใส่_URL_ที่ได้จาก_Google_Apps_Script_ตรงนี้" || WEB_APP_URL === "") {
+                alert("กรุณาใส่ WEB_APP_URL ในโค้ด (บรรทัดที่ 325) ก่อนทำการส่งข้อมูล");
+                return;
+            }
+
+            // 3. เตรียม Payload ให้ตรงกับข้อมูลใหม่
+            const payload = {
+                department: document.getElementById('department').value,
+                docDate: document.getElementById('docDate').value,
+                requestType: reqType.value,
+                projectId: document.getElementById('projectId').value,
+                projectName: document.getElementById('projectName').value,
+                activityId: document.getElementById('activityId').value,
+                mainActivity: document.getElementById('mainActivity').value,
+                allocatedBudget: document.getElementById('allocatedBudget').value, // งบที่จัดสรร
+                subActivity: document.getElementById('subActivity').value,
+                budgetSource: bgSource.value,
+                items: items,
+                grandTotal: grandTotalValue,
+                grandTotalText: document.getElementById('grandTotalThaiText').innerText, // ส่งตัวหนังสือภาษาไทยไปด้วย
+                responsibleName: document.getElementById('responsibleName').value,
+                responsibleEmail: document.getElementById('responsibleEmail').value,
+                headOfDepartment: document.getElementById('headOfDepartment').value, // หัวหน้ากลุ่มที่อนุมัติ
+                committee1: document.getElementById('committee1').value,
+                committee2: document.getElementById('committee2').value,
+                committee3: document.getElementById('committee3').value
+            };
+
+            // Loading state
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> ระบบกำลังทำงาน...`;
+            btn.disabled = true;
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
+            lucide.createIcons();
+
+            // 4. ส่งข้อมูลไปยัง Google Apps Script (POST)
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "success" || data.ok === true) {
+                    // แสดงลิงก์ PDF ที่ได้กลับมาจากระบบ
+                    if(data.pdfUrl) {
+                        document.getElementById('pdfDownloadLink').href = data.pdfUrl;
+                        document.getElementById('pdfDownloadLink').style.display = 'block';
+                    }
+                    document.getElementById('successModal').classList.remove('hidden');
+                } else {
+                    alert("เกิดข้อผิดพลาดจากเซิร์ฟเวอร์: " + (data.message || data.error));
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert("มีปัญหาในการเชื่อมต่อ ตรวจสอบว่าได้นำ Web App URL มาใส่แล้วหรือไม่");
+            })
+            .finally(() => {
+                // คืนค่าปุ่มให้กลับสู่สภาพเดิม
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+                btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                lucide.createIcons();
+            });
         }
-      `}} />
-    </div>
-  );
-}
+
+        function closeModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            document.getElementById('purchaseForm').reset();
+            document.getElementById('itemTableBody').innerHTML = '';
+            document.getElementById('grandTotalText').innerText = '0.00';
+            document.getElementById('grandTotalThaiText').innerText = 'ศูนย์บาทถ้วน';
+            rowCount = 0;
+            switchPage('dashboard');
+        }
+    </script>
+</body>
+</html>

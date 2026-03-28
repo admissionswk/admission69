@@ -6,18 +6,16 @@
     <title>ระบบบริหารแผนงานและงบประมาณ</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Sarabun (เหมาะกับงานราชการ) -->
+    <!-- Google Fonts: Sarabun -->
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         body { font-family: 'Sarabun', sans-serif; }
-        /* ซ่อน section ที่ไม่ได้ใช้งาน */
         .page-section { display: none; }
         .page-section.active { display: block; }
         
-        /* Custom Colors */
         .bg-primary { background-color: #1B5E20; }
         .text-primary { color: #1B5E20; }
         .border-primary { border-color: #1B5E20; }
@@ -33,13 +31,13 @@
 <body class="bg-gray-50 text-gray-800 h-screen flex overflow-hidden">
 
     <!-- Sidebar -->
-    <aside class="w-64 bg-primary text-white flex flex-col transition-all duration-300">
+    <aside class="w-64 bg-primary text-white flex flex-col transition-all duration-300 shadow-xl z-20">
         <div class="p-6 flex items-center gap-3 border-b border-green-800">
             <i data-lucide="landmark" class="w-8 h-8 text-[#C9A227]"></i>
             <h1 class="text-xl font-bold tracking-wide">GovBudget</h1>
         </div>
         <nav class="flex-1 p-4 space-y-2">
-            <button onclick="navigate('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left hover:bg-green-800 transition-colors active-nav">
+            <button onclick="navigate('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left hover:bg-green-800 transition-colors">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span>ภาพรวม (Dashboard)</span>
             </button>
@@ -58,38 +56,38 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-full overflow-hidden">
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
         <!-- Topbar -->
         <header class="bg-white shadow-sm px-8 py-4 flex justify-between items-center z-10">
             <h2 id="page-title" class="text-2xl font-semibold text-primary">ภาพรวมงบประมาณ</h2>
             <div class="flex items-center gap-4">
-                <span class="text-sm text-gray-500">ปีงบประมาณ 2569</span>
-                <div class="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-primary font-bold">
+                <span class="text-sm text-gray-500 font-medium">ปีงบประมาณ 2569</span>
+                <div class="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-primary font-bold shadow-sm">
                     สพ
                 </div>
             </div>
         </header>
 
-        <!-- Content Area -->
-        <div class="flex-1 overflow-y-auto p-8 relative">
-
-            <!-- Loading Overlay -->
-            <div id="loading" class="absolute inset-0 bg-white/80 z-50 hidden items-center justify-center">
-                <div class="flex flex-col items-center gap-3">
-                    <i data-lucide="loader-2" class="w-10 h-10 text-primary animate-spin"></i>
-                    <p class="text-primary font-medium">กำลังประมวลผล...</p>
-                </div>
+        <!-- Loading Overlay -->
+        <div id="loading" class="absolute inset-0 bg-white/80 z-50 flex items-center justify-center hidden">
+            <div class="flex flex-col items-center gap-3 bg-white p-6 rounded-xl shadow-lg border">
+                <i data-lucide="loader-2" class="w-10 h-10 text-primary animate-spin"></i>
+                <p class="text-primary font-medium">กำลังเชื่อมต่อฐานข้อมูล...</p>
             </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-y-auto p-8">
 
             <!-- 1. Dashboard Section -->
-            <section id="dashboard" class="page-section active max-w-6xl mx-auto space-y-6">
+            <section id="dashboard" class="page-section max-w-6xl mx-auto space-y-6">
                 <!-- Summary Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 border-t-4 border-t-blue-500">
                         <div class="flex justify-between items-start">
                             <div>
                                 <p class="text-sm text-gray-500 mb-1">งบประมาณจัดสรรทั้งหมด</p>
-                                <h3 class="text-3xl font-bold text-gray-800">1,500,000 <span class="text-lg font-normal text-gray-500">บาท</span></h3>
+                                <h3 class="text-3xl font-bold text-gray-800" id="dash-total">0 <span class="text-lg font-normal text-gray-500">บาท</span></h3>
                             </div>
                             <div class="p-3 bg-blue-50 rounded-lg text-blue-600">
                                 <i data-lucide="wallet" class="w-6 h-6"></i>
@@ -100,8 +98,8 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 border-t-4 border-t-[#C9A227]">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-sm text-gray-500 mb-1">เบิกจ่าย/อนุมัติแล้ว</p>
-                                <h3 class="text-3xl font-bold text-gray-800">650,000 <span class="text-lg font-normal text-gray-500">บาท</span></h3>
+                                <p class="text-sm text-gray-500 mb-1">เบิกจ่าย/ขออนุมัติไปแล้ว</p>
+                                <h3 class="text-3xl font-bold text-gray-800" id="dash-used">0 <span class="text-lg font-normal text-gray-500">บาท</span></h3>
                             </div>
                             <div class="p-3 bg-yellow-50 rounded-lg text-[#C9A227]">
                                 <i data-lucide="trending-up" class="w-6 h-6"></i>
@@ -112,8 +110,8 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 border-t-4 border-t-[#1B5E20]">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-sm text-gray-500 mb-1">งบประมาณคงเหลือ</p>
-                                <h3 class="text-3xl font-bold text-[#1B5E20]">850,000 <span class="text-lg font-normal text-gray-500">บาท</span></h3>
+                                <p class="text-sm text-gray-500 mb-1">งบประมาณคงเหลือโดยประมาณ</p>
+                                <h3 class="text-3xl font-bold text-[#1B5E20]" id="dash-remain">0 <span class="text-lg font-normal text-gray-500">บาท</span></h3>
                             </div>
                             <div class="p-3 bg-green-50 rounded-lg text-[#1B5E20]">
                                 <i data-lucide="coins" class="w-6 h-6"></i>
@@ -125,51 +123,18 @@
                 <!-- Progress Bar -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                     <div class="flex justify-between items-end mb-2">
-                        <h4 class="font-medium text-gray-700">อัตราการเบิกจ่าย</h4>
-                        <span class="text-xl font-bold text-primary">43.3%</span>
+                        <h4 class="font-medium text-gray-700">ภาพรวมอัตราการเบิกจ่าย</h4>
+                        <span class="text-xl font-bold text-primary" id="dash-percent">0%</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
-                        <div class="bg-accent h-4 rounded-full" style="width: 43.3%"></div>
-                    </div>
-                </div>
-
-                <!-- Recent Status -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                    <h4 class="font-medium text-gray-700 mb-4 border-b pb-2">สถานะคำขอล่าสุด</h4>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center p-3 hover:bg-gray-50 rounded-lg">
-                            <div class="flex items-center gap-4">
-                                <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
-                                <div>
-                                    <p class="font-medium text-gray-800">จัดซื้อวัสดุสำนักงาน</p>
-                                    <p class="text-xs text-gray-500">โครงการบริหารจัดการทั่วไป</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-medium text-gray-800">12,500 บาท</p>
-                                <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full">รออนุมัติ</span>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center p-3 hover:bg-gray-50 rounded-lg">
-                            <div class="flex items-center gap-4">
-                                <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                                <div>
-                                    <p class="font-medium text-gray-800">จ้างเหมาทำความสะอาด</p>
-                                    <p class="text-xs text-gray-500">กิจกรรมพัฒนาสภาพแวดล้อม</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-medium text-gray-800">50,000 บาท</p>
-                                <span class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">อนุมัติแล้ว</span>
-                            </div>
-                        </div>
+                        <div id="dash-progress" class="bg-accent h-4 rounded-full transition-all duration-1000" style="width: 0%"></div>
                     </div>
                 </div>
             </section>
 
             <!-- 2. Form Section -->
             <section id="form" class="page-section max-w-4xl mx-auto">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 relative">
                     
                     <div class="text-center mb-8 border-b pb-6">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Garuda_Emblem_of_Thailand.svg/200px-Garuda_Emblem_of_Thailand.svg.png" alt="ตราครุฑ" class="h-16 mx-auto mb-4 opacity-80" onerror="this.style.display='none'">
@@ -178,16 +143,15 @@
                     </div>
 
                     <form id="budgetForm" class="space-y-6" onsubmit="submitForm(event)">
-                        
                         <!-- สังกัด -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">กลุ่มบริหารงาน/กลุ่มสาระ <span class="text-red-500">*</span></label>
-                                <input type="text" id="department" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all">
+                                <input type="text" id="department" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">วันที่ <span class="text-red-500">*</span></label>
-                                <input type="date" id="reqDate" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all">
+                                <input type="date" id="reqDate" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none">
                             </div>
                         </div>
 
@@ -209,40 +173,42 @@
                                 </label>
                             </div>
                             <div class="mt-3">
-                                <input type="text" id="reqDetail" placeholder="ระบุรายละเอียดการจัดซื้อ/จ้าง/เบิกจ่าย..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm">
+                                <input type="text" id="reqDetail" placeholder="ระบุรายละเอียดการจัดซื้อ/จ้าง/เบิกจ่าย (ทางเลือก)..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm">
                             </div>
                         </div>
 
-                        <!-- ข้อมูลโครงการ -->
-                        <div class="space-y-4">
+                        <!-- ข้อมูลโครงการ (Autocomplete) -->
+                        <div class="space-y-4 p-5 bg-blue-50/30 rounded-lg border border-blue-100 relative">
+                            <div class="absolute -top-3 left-4 bg-white px-2 text-xs font-semibold text-blue-600 rounded">ข้อมูลกิจกรรม (พิมพ์เพื่อค้นหา)</div>
+                            
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div class="md:col-span-1">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">โครงการที่</label>
-                                    <input type="text" id="projCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                                    <input type="text" id="projCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none bg-white">
                                 </div>
                                 <div class="md:col-span-2">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อโครงการ <span class="text-red-500">*</span></label>
-                                    <input type="text" id="projName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                                    <input type="text" id="projName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none bg-white">
                                 </div>
                             </div>
                             
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative">
                                 <div class="md:col-span-1">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">กิจกรรมที่ <span class="text-red-500">*</span></label>
-                                    <input type="text" id="actCode" autocomplete="off" placeholder="พิมพ์ค้นหารหัส..." required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                                    <input type="text" id="actCode" autocomplete="off" placeholder="พิมพ์ค้นหารหัส..." required class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
                                 </div>
                                 <div class="md:col-span-2">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อกิจกรรม <span class="text-red-500">*</span></label>
-                                    <input type="text" id="actName" autocomplete="off" placeholder="พิมพ์ค้นหาชื่อกิจกรรม..." required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                                    <input type="text" id="actName" autocomplete="off" placeholder="พิมพ์ค้นหาชื่อกิจกรรม..." required class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
                                 </div>
 
                                 <!-- Dropdown สำหรับ Autocomplete -->
-                                <div id="autocomplete-dropdown" class="absolute z-50 w-full bg-white top-full left-0 mt-1 border border-gray-200 rounded-md shadow-lg hidden max-h-60 overflow-y-auto"></div>
+                                <div id="autocomplete-dropdown" class="absolute z-50 w-full bg-white top-full left-0 mt-1 border border-gray-200 rounded-md shadow-xl hidden max-h-60 overflow-y-auto"></div>
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">กิจกรรมย่อย</label>
-                                <input type="text" id="subActName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                                <input type="text" id="subActName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none bg-white">
                             </div>
                         </div>
 
@@ -254,11 +220,11 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1 text-primary">จำนวนเงินที่ขอเบิกครั้งนี้ (บาท) <span class="text-red-500">*</span></label>
-                                <input type="number" id="requestAmount" oninput="convertToText()" required class="w-full px-4 py-2 border border-primary rounded-lg focus:ring-2 focus:ring-primary outline-none font-bold text-lg text-primary">
+                                <input type="number" step="0.01" id="requestAmount" oninput="convertToText()" required class="w-full px-4 py-2 border border-primary rounded-lg focus:ring-2 focus:ring-primary outline-none font-bold text-lg text-primary">
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">ตัวอักษร</label>
-                                <input type="text" id="requestAmountText" readonly class="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg outline-none text-gray-600">
+                                <input type="text" id="requestAmountText" readonly class="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg outline-none text-gray-600 font-medium">
                             </div>
                         </div>
 
@@ -270,7 +236,7 @@
 
                         <div class="pt-6 border-t flex justify-end gap-4">
                             <button type="button" onclick="document.getElementById('budgetForm').reset()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">ล้างข้อมูล</button>
-                            <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-green-800 transition-colors shadow-md flex items-center gap-2">
+                            <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-green-800 transition-colors shadow-md flex items-center gap-2 font-medium">
                                 <i data-lucide="send" class="w-4 h-4"></i>
                                 ส่งขออนุมัติ
                             </button>
@@ -287,39 +253,27 @@
                             <i data-lucide="list-ordered" class="w-5 h-5 text-primary"></i>
                             ทะเบียนคุมการขอใช้งบประมาณ
                         </h3>
-                        <div class="flex gap-2">
-                            <button onclick="fetchData()" class="px-3 py-1.5 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-1 text-gray-600">
-                                <i data-lucide="refresh-cw" class="w-4 h-4"></i> รีเฟรช
-                            </button>
-                        </div>
+                        <button onclick="fetchTableData()" class="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2 text-gray-600 shadow-sm transition-all">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> รีเฟรชข้อมูล
+                        </button>
                     </div>
                     
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm whitespace-nowrap">
                             <thead class="bg-primary text-white">
                                 <tr>
-                                    <th class="px-6 py-3 font-medium">วันที่</th>
-                                    <th class="px-6 py-3 font-medium">สังกัด</th>
-                                    <th class="px-6 py-3 font-medium">ประเภท</th>
-                                    <th class="px-6 py-3 font-medium">โครงการ / กิจกรรม</th>
-                                    <th class="px-6 py-3 font-medium text-right">จำนวนเงิน (บาท)</th>
-                                    <th class="px-6 py-3 font-medium text-center">สถานะ</th>
+                                    <th class="px-6 py-4 font-medium">วันที่</th>
+                                    <th class="px-6 py-4 font-medium">สังกัด</th>
+                                    <th class="px-6 py-4 font-medium">ประเภท</th>
+                                    <th class="px-6 py-4 font-medium">โครงการ / กิจกรรม</th>
+                                    <th class="px-6 py-4 font-medium text-right">จำนวนเงิน (บาท)</th>
+                                    <th class="px-6 py-4 font-medium text-center">สถานะ</th>
                                 </tr>
                             </thead>
                             <tbody id="tableBody" class="divide-y divide-gray-100 text-gray-700">
-                                <!-- Data will be populated here via JS -->
+                                <tr><td colspan="6" class="text-center py-10 text-gray-500">กำลังโหลดข้อมูล...</td></tr>
                             </tbody>
                         </table>
-                    </div>
-                    
-                    <!-- Pagination (Mock) -->
-                    <div class="p-4 border-t flex justify-between items-center text-sm text-gray-500">
-                        <span>แสดง 1 ถึง 5 จาก 5 รายการ</span>
-                        <div class="flex gap-1">
-                            <button class="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50" disabled>ก่อนหน้า</button>
-                            <button class="px-3 py-1 border rounded hover:bg-gray-50 bg-primary text-white">1</button>
-                            <button class="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50" disabled>ถัดไป</button>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -328,12 +282,19 @@
     </main>
 
     <script>
-        // Initialize Lucide Icons
+        // Initialize Icons
         lucide.createIcons();
 
-        // -----------------------------------------
+        // ==========================================
+        // ตั้งค่า URL ของ Google Apps Script ที่นี่ !!
+        // ==========================================
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbyw1EGnS15FY7O-GcYAIn_NTuA3XtQ0NupwoMveQZUl6UZ-U8LWtJxRW_aTH8uWNfz6/exec'; 
+
+        // Global State
+        let masterData = [];
+        let requestsData = [];
+
         // 1. Navigation Logic
-        // -----------------------------------------
         const pageTitles = {
             'dashboard': 'ภาพรวมงบประมาณ',
             'form': 'แบบขออนุมัติงบประมาณ',
@@ -341,119 +302,82 @@
         };
 
         function navigate(pageId) {
-            // Hide all sections
             document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
-            // Remove active class from nav buttons
-            document.querySelectorAll('.nav-btn').forEach(el => {
-                el.classList.remove('bg-green-800', 'border-l-4', 'border-accent');
-            });
-
-            // Show selected section
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('bg-green-800', 'border-l-4', 'border-accent'));
             document.getElementById(pageId).classList.add('active');
-            
-            // Highlight selected nav
-            const activeNav = document.getElementById(`nav-${pageId}`);
-            activeNav.classList.add('bg-green-800', 'border-l-4', 'border-accent');
-
-            // Update Header Title
+            document.getElementById(`nav-${pageId}`).classList.add('bg-green-800', 'border-l-4', 'border-accent');
             document.getElementById('page-title').innerText = pageTitles[pageId];
-
-            // If navigating to table, fetch data
-            if(pageId === 'table') {
-                fetchData();
-            }
         }
 
-        // Set default active nav styling on load
-        document.getElementById('nav-dashboard').classList.add('bg-green-800', 'border-l-4', 'border-accent');
-        
-        // Set today's date in form
-        document.getElementById('reqDate').valueAsDate = new Date();
-
-
-        // -----------------------------------------
-        // 2. Form Logic & Thai Baht Text
-        // -----------------------------------------
-        function convertToText() {
-            const num = document.getElementById('requestAmount').value;
-            const textEl = document.getElementById('requestAmountText');
-            if(!num || num <= 0) {
-                textEl.value = "";
-                return;
-            }
-            textEl.value = getThaiBahtText(num);
-        }
-
-        // ฟังก์ชันแปลงตัวเลขเป็นคำอ่านภาษาไทย
-        function getThaiBahtText(amount) {
-            let number = parseFloat(amount).toFixed(2);
-            let parts = number.split('.');
-            let intPart = parts[0];
-            let decPart = parts[1];
-
-            const words = ["", "หนึ่ง", "สอง", "สาม", "สี่", "ห้า", "หก", "เจ็ด", "แปด", "เก้า"];
-            const positions = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
-
-            function readNumber(numStr) {
-                if (numStr === "0") return "";
-                let result = "";
-                let len = numStr.length;
-                for (let i = 0; i < len; i++) {
-                    let digit = parseInt(numStr.charAt(i));
-                    let pos = len - 1 - i;
-                    if (digit !== 0) {
-                        if (pos === 1 && digit === 1) {
-                            result += "สิบ";
-                        } else if (pos === 1 && digit === 2) {
-                            result += "ยี่สิบ";
-                        } else if (pos === 0 && digit === 1 && len > 1 && numStr.charAt(i - 1) !== '0') {
-                            result += "เอ็ด";
-                        } else {
-                            result += words[digit] + positions[pos];
-                        }
-                    }
-                }
-                return result;
-            }
-
-            let bahtText = "";
-            if (intPart === "0") {
-                bahtText = "ศูนย์";
-            } else if (intPart.length > 6) {
-                let millions = intPart.substring(0, intPart.length - 6);
-                let rest = intPart.substring(intPart.length - 6);
-                bahtText = readNumber(millions) + "ล้าน" + readNumber(rest);
-            } else {
-                bahtText = readNumber(intPart);
-            }
-
-            let satangText = "";
-            if (decPart && decPart !== "00") {
-                satangText = readNumber(decPart) + "สตางค์";
-            } else {
-                satangText = "ถ้วน";
-            }
-
-            if (bahtText === "ศูนย์" && satangText !== "ถ้วน") {
-                return `(${satangText})`;
-            }
-
-            return `(${bahtText}บาท${satangText})`;
-        }
-
-        // -----------------------------------------
-        // 3. API Connection (Google Apps Script)
-        // -----------------------------------------
-        
-        // ** ใส่ URL ของ Google Apps Script Web App ที่ได้จากการ Deploy ที่นี่ **
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxv2XN8z7yhuelphkqr58cgMbyxfcZSU3_soA5oMd7sd19kU_ga9NTBx9ElA4ZMLx3c/exec'; 
-        
-      
-
+        // 2. Fetch API Data
         function showLoading(show) {
             document.getElementById('loading').style.display = show ? 'flex' : 'none';
         }
 
+        // ดึงข้อมูล Master Data สำหรับ Autocomplete
+        async function fetchMasterData() {
+            try {
+                if(!GAS_URL || GAS_URL.includes('ใส่_URL')) return;
+                const response = await fetch(GAS_URL + '?action=getMasterData');
+                const result = await response.json();
+                if(result.status === 'success') {
+                    masterData = result.data;
+                    updateDashboard(); // Update dashboard after getting master
+                }
+            } catch (error) {
+                console.error("Error fetching Master Data:", error);
+            }
+        }
+
+        // ดึงข้อมูลประวัติสำหรับตาราง
+        async function fetchTableData() {
+            showLoading(true);
+            try {
+                if(!GAS_URL || GAS_URL.includes('ใส่_URL')) {
+                    document.getElementById('tableBody').innerHTML = '<tr><td colspan="6" class="text-center py-8 text-red-500">กรุณาใส่ Web App URL ในโค้ดก่อน</td></tr>';
+                    showLoading(false);
+                    return;
+                }
+                const response = await fetch(GAS_URL + '?action=getData');
+                const result = await response.json();
+                
+                if(result.status === 'success') {
+                    requestsData = result.data;
+                    renderTable(requestsData);
+                    updateDashboard(); // Update dashboard after getting requests
+                }
+            } catch (error) {
+                console.error("Error fetching Table Data:", error);
+            }
+            showLoading(false);
+        }
+
+        // 3. Update Dashboard
+        function updateDashboard() {
+            // คำนวณยอดรวมงบจัดสรร (จาก Master Data)
+            let totalBudget = masterData.reduce((sum, item) => sum + (Number(item.budget) || 0), 0);
+            
+            // คำนวณยอดที่ขอเบิกไปแล้ว (จาก Requests Data) *ยกเว้นสถานะไม่อนุมัติ*
+            let usedBudget = requestsData.reduce((sum, item) => {
+                if (item.status !== 'ไม่อนุมัติ') {
+                    return sum + (Number(item.amount) || 0);
+                }
+                return sum;
+            }, 0);
+
+            let remainingBudget = totalBudget - usedBudget;
+            let percentUsed = totalBudget > 0 ? ((usedBudget / totalBudget) * 100).toFixed(1) : 0;
+
+            // Animate Numbers
+            document.getElementById('dash-total').innerHTML = `${totalBudget.toLocaleString()} <span class="text-lg font-normal text-gray-500">บาท</span>`;
+            document.getElementById('dash-used').innerHTML = `${usedBudget.toLocaleString()} <span class="text-lg font-normal text-gray-500">บาท</span>`;
+            document.getElementById('dash-remain').innerHTML = `${remainingBudget.toLocaleString()} <span class="text-lg font-normal text-gray-500">บาท</span>`;
+            
+            document.getElementById('dash-percent').innerText = `${percentUsed}%`;
+            document.getElementById('dash-progress').style.width = `${percentUsed}%`;
+        }
+
+        // 4. Render Table
         function getStatusBadge(status) {
             switch(status) {
                 case 'รออนุมัติ': return '<span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs">รออนุมัติ</span>';
@@ -468,55 +392,112 @@
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
             
-            if(data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">ไม่มีข้อมูล</td></tr>';
+            // Reverse data to show newest first
+            const reversedData = [...data].reverse();
+
+            if(reversedData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">ยังไม่มีข้อมูลการขออนุมัติ</td></tr>';
                 return;
             }
 
-            data.forEach(row => {
+            reversedData.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50 transition-colors';
+                
+                // Handle Date display safely
+                let dateStr = row.date;
+                try {
+                    if (row.date && !isNaN(new Date(row.date))) {
+                        dateStr = new Date(row.date).toLocaleDateString('th-TH');
+                    }
+                } catch(e) {}
+
                 tr.innerHTML = `
-                    <td class="px-6 py-4">${new Date(row.date).toLocaleDateString('th-TH')}</td>
-                    <td class="px-6 py-4">${row.dept}</td>
-                    <td class="px-6 py-4">${row.type}</td>
-                    <td class="px-6 py-4 max-w-xs truncate" title="${row.project}">${row.project}</td>
-                    <td class="px-6 py-4 text-right font-medium">${Number(row.amount).toLocaleString()}</td>
+                    <td class="px-6 py-4">${dateStr}</td>
+                    <td class="px-6 py-4">${row.dept || '-'}</td>
+                    <td class="px-6 py-4">${row.type || '-'}</td>
+                    <td class="px-6 py-4 max-w-xs truncate" title="${row.project} / ${row.actName}">
+                        <div class="font-medium text-gray-800 truncate">${row.actName || '-'}</div>
+                        <div class="text-xs text-gray-500 truncate">${row.project || '-'}</div>
+                    </td>
+                    <td class="px-6 py-4 text-right font-medium text-[#C9A227]">${Number(row.amount || 0).toLocaleString()}</td>
                     <td class="px-6 py-4 text-center">${getStatusBadge(row.status || 'รออนุมัติ')}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        async function fetchData() {
-            showLoading(true);
-            try {
-                // For REAL implementation uncomment below:
-                /*
-                const response = await fetch(GAS_URL + '?action=getData');
-                const result = await response.json();
-                if(result.status === 'success') {
-                    renderTable(result.data);
-                }
-                */
-                
-                // Demo fallback
-                setTimeout(() => {
-                    renderTable(mockData);
-                    showLoading(false);
-                }, 800);
+        // 5. Autocomplete Logic
+        function setupAutocomplete() {
+            const actNameInput = document.getElementById('actName');
+            const actCodeInput = document.getElementById('actCode');
+            const dropdown = document.getElementById('autocomplete-dropdown');
 
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                alert("เกิดข้อผิดพลาดในการโหลดข้อมูล");
-                showLoading(false);
-            }
+            const handleSearch = function(e) {
+                const val = e.target.value.toLowerCase();
+                dropdown.innerHTML = '';
+                
+                if (!val) {
+                    dropdown.classList.add('hidden');
+                    return;
+                }
+
+                const filtered = masterData.filter(item => 
+                    (item.actName && item.actName.toLowerCase().includes(val)) || 
+                    (item.actCode && item.actCode.toString().toLowerCase().includes(val)) ||
+                    (item.projName && item.projName.toLowerCase().includes(val))
+                );
+                
+                if (filtered.length > 0) {
+                    filtered.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'p-3 hover:bg-blue-50 cursor-pointer border-b text-sm transition-colors';
+                        
+                        const budgetDisplay = item.budget ? `งบจัดสรร: ${Number(item.budget).toLocaleString()} บาท` : 'ไม่ระบุงบจัดสรร';
+                        
+                        div.innerHTML = `
+                            <div class="font-medium text-blue-700">${item.actName} <span class="text-xs text-gray-500">(${item.actCode || '-'})</span></div>
+                            <div class="text-xs text-gray-600 mt-1 flex justify-between">
+                                <span class="truncate pr-2">โครงการ: ${item.projName}</span>
+                                <span class="font-medium ${item.budget ? 'text-[#C9A227]' : 'text-gray-400'} whitespace-nowrap">${budgetDisplay}</span>
+                            </div>
+                        `;
+                        
+                        div.onclick = () => {
+                            document.getElementById('actName').value = item.actName || '';
+                            document.getElementById('actCode').value = item.actCode || '';
+                            document.getElementById('projName').value = item.projName || '';
+                            document.getElementById('projCode').value = item.projCode || '';
+                            document.getElementById('allocatedBudget').value = item.budget || '';
+                            dropdown.classList.add('hidden');
+                        };
+                        dropdown.appendChild(div);
+                    });
+                    dropdown.classList.remove('hidden');
+                } else {
+                    dropdown.innerHTML = '<div class="p-3 text-sm text-gray-500 text-center">ไม่พบข้อมูลโครงการ/กิจกรรม</div>';
+                    dropdown.classList.remove('hidden');
+                }
+            };
+
+            actNameInput.addEventListener('input', handleSearch);
+            actCodeInput.addEventListener('input', handleSearch);
+
+            document.addEventListener('click', function(e) {
+                if (!actNameInput.contains(e.target) && !actCodeInput.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
         }
 
+        // 6. Form Submission (POST to GAS)
         async function submitForm(e) {
             e.preventDefault();
-            
-            // Gather form data
+            if(!GAS_URL || GAS_URL.includes('ใส่_URL')) {
+                alert("กรุณาตั้งค่า GAS_URL ในโค้ดก่อนทำการบันทึก");
+                return;
+            }
+
             const formData = {
                 date: document.getElementById('reqDate').value,
                 dept: document.getElementById('department').value,
@@ -536,133 +517,86 @@
             showLoading(true);
 
             try {
-                // For REAL GAS implementation (using POST or GET depending on CORS setup):
-                // GAS web apps often require `no-cors` for direct POST, which makes reading response hard.
-                // A common workaround is sending data as URL parameters or using a specific form submission method.
-                
-                /*
+                // Use POST with URLSearchParams for Apps Script
                 const response = await fetch(GAS_URL, {
                     method: 'POST',
+                    mode: 'no-cors', // Avoid CORS errors for GAS POST
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams(formData).toString()
                 });
-                */
 
-                // Demo fallback
-                setTimeout(() => {
-                    mockData.unshift(formData); // Add to mock array
-                    alert('ส่งคำขออนุมัติเรียบร้อยแล้ว');
-                    document.getElementById('budgetForm').reset();
-                    document.getElementById('reqDate').valueAsDate = new Date();
-                    document.getElementById('requestAmountText').value = "";
-                    showLoading(false);
-                    navigate('table'); // Go to table to see new data
-                }, 1000);
+                // Since we use no-cors, we can't read response. Assume success.
+                alert('ส่งคำขออนุมัติเรียบร้อยแล้ว');
+                document.getElementById('budgetForm').reset();
+                document.getElementById('reqDate').valueAsDate = new Date();
+                document.getElementById('requestAmountText').value = "";
+                
+                // Refresh data and go to table
+                await fetchTableData();
+                navigate('table'); 
 
             } catch (error) {
                 console.error("Error submitting form:", error);
-                alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
-                showLoading(false);
+                alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่");
             }
+            showLoading(false);
         }
 
-        // Initial render
-        renderTable(mockData);
-
-        // -----------------------------------------
-        // 4. Autocomplete Logic (ค้นหากิจกรรม)
-        // -----------------------------------------
-        function setupAutocomplete() {
-            const actNameInput = document.getElementById('actName');
-            const actCodeInput = document.getElementById('actCode');
-            const dropdown = document.getElementById('autocomplete-dropdown');
-
-            // ฟังก์ชันค้นหาและแสดงผล
-            const handleSearch = function(e) {
-                const val = e.target.value.toLowerCase();
-                dropdown.innerHTML = '';
-                
-                if (!val) {
-                    dropdown.classList.add('hidden');
-                    return;
-                }
-
-                // กรองข้อมูลจาก masterData
-                const filtered = masterData.filter(item => 
-                    item.actName.toLowerCase().includes(val) || 
-                    item.actCode.toLowerCase().includes(val) ||
-                    item.projName.toLowerCase().includes(val) ||
-                    item.projCode.toLowerCase().includes(val)
-                );
-                
-                if (filtered.length > 0) {
-                    filtered.forEach(item => {
-                        const div = document.createElement('div');
-                        div.className = 'p-3 hover:bg-green-50 cursor-pointer border-b text-sm transition-colors';
-                        
-                        // จัดการแสดงผลงบประมาณ กรณีเป็นค่าว่าง
-                        const budgetDisplay = item.budget ? `งบจัดสรร: ${Number(item.budget).toLocaleString()} บาท` : 'ไม่ระบุงบจัดสรร';
-                        
-                        div.innerHTML = `
-                            <div class="font-medium text-primary">${item.actName} <span class="text-xs text-gray-500">(${item.actCode})</span></div>
-                            <div class="text-xs text-gray-600 mt-1 flex justify-between">
-                                <span class="truncate pr-2">โครงการ: ${item.projName}</span>
-                                <span class="font-medium ${item.budget ? 'text-[#C9A227]' : 'text-gray-400'} whitespace-nowrap">${budgetDisplay}</span>
-                            </div>
-                        `;
-                        
-                        // เมื่อคลิกเลือกรายการให้ออโต้เติมข้อมูลทั้งหมด
-                        div.onclick = () => {
-                            document.getElementById('actName').value = item.actName;
-                            document.getElementById('actCode').value = item.actCode;
-                            document.getElementById('projName').value = item.projName;
-                            document.getElementById('projCode').value = item.projCode;
-                            document.getElementById('allocatedBudget').value = item.budget || ''; // ถ้าไม่มีงบให้เว้นว่าง
-                            dropdown.classList.add('hidden');
-                        };
-                        dropdown.appendChild(div);
-                    });
-                    dropdown.classList.remove('hidden');
-                } else {
-                    const div = document.createElement('div');
-                    div.className = 'p-3 text-sm text-gray-500 text-center';
-                    div.innerText = 'ไม่พบข้อมูลโครงการ/กิจกรรม';
-                    dropdown.appendChild(div);
-                    dropdown.classList.remove('hidden');
-                }
-            };
-
-            // ให้พิมพ์ช่องไหนก็ค้นหาได้
-            actNameInput.addEventListener('input', handleSearch);
-            actCodeInput.addEventListener('input', handleSearch);
-
-            // ปิด dropdown เมื่อคลิกพื้นที่อื่น
-            document.addEventListener('click', function(e) {
-                if (!actNameInput.contains(e.target) && !actCodeInput.contains(e.target) && !dropdown.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                }
-            });
+        // 7. Thai Baht Text Generator
+        function convertToText() {
+            const num = document.getElementById('requestAmount').value;
+            const textEl = document.getElementById('requestAmountText');
+            if(!num || num <= 0) { textEl.value = ""; return; }
+            textEl.value = getThaiBahtText(num);
         }
 
-        // โหลดข้อมูล Master Data จาก Google Sheet (เปิดใช้เมื่อต่อ API จริง)
-        async function fetchMasterData() {
-            try {
-                // เอา Comment ออกเมื่อมี URL ของ GAS แล้ว
-                
-                const response = await fetch(GAS_URL + '?action=getMasterData');
-                const result = await response.json();
-                if(result.status === 'success') {
-                    masterData = result.data;
+        function getThaiBahtText(amount) {
+            let number = parseFloat(amount).toFixed(2);
+            let parts = number.split('.');
+            let intPart = parts[0];
+            let decPart = parts[1];
+
+            const words = ["", "หนึ่ง", "สอง", "สาม", "สี่", "ห้า", "หก", "เจ็ด", "แปด", "เก้า"];
+            const positions = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
+
+            function readNumber(numStr) {
+                if (numStr === "0") return "";
+                let result = "";
+                let len = numStr.length;
+                for (let i = 0; i < len; i++) {
+                    let digit = parseInt(numStr.charAt(i));
+                    let pos = len - 1 - i;
+                    if (digit !== 0) {
+                        if (pos === 1 && digit === 1) result += "สิบ";
+                        else if (pos === 1 && digit === 2) result += "ยี่สิบ";
+                        else if (pos === 0 && digit === 1 && len > 1 && numStr.charAt(i - 1) !== '0') result += "เอ็ด";
+                        else result += words[digit] + positions[pos];
+                    }
                 }
-                
-            } catch (error) {
-                console.error("Error fetching master data:", error);
+                return result;
             }
+
+            let bahtText = "";
+            if (intPart === "0") bahtText = "ศูนย์";
+            else if (intPart.length > 6) {
+                let millions = intPart.substring(0, intPart.length - 6);
+                let rest = intPart.substring(intPart.length - 6);
+                bahtText = readNumber(millions) + "ล้าน" + readNumber(rest);
+            } else bahtText = readNumber(intPart);
+
+            let satangText = (decPart && decPart !== "00") ? readNumber(decPart) + "สตางค์" : "ถ้วน";
+            if (bahtText === "ศูนย์" && satangText !== "ถ้วน") return `(${satangText})`;
+            return `(${bahtText}บาท${satangText})`;
         }
 
-        // เรียกใช้งานฟังก์ชัน
-        setupAutocomplete();
-        fetchMasterData();
+        // Initialize App
+        window.onload = () => {
+            document.getElementById('reqDate').valueAsDate = new Date();
+            navigate('dashboard');
+            setupAutocomplete();
+            fetchMasterData();
+            fetchTableData();
+        };
 
     </script>
 </body>

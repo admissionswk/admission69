@@ -182,13 +182,14 @@
                             <div class="absolute -top-3 left-4 bg-white px-2 text-xs font-semibold text-blue-600 rounded">ข้อมูลกิจกรรม (พิมพ์เพื่อค้นหา)</div>
                             
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <!-- เปลี่ยนเป็น readonly และใส่ bg-gray-100 -->
                                 <div class="md:col-span-1">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">โครงการที่</label>
-                                    <input type="text" id="projCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none bg-white">
+                                    <input type="text" id="projCode" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 outline-none cursor-not-allowed">
                                 </div>
                                 <div class="md:col-span-2">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อโครงการ <span class="text-red-500">*</span></label>
-                                    <input type="text" id="projName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none bg-white">
+                                    <input type="text" id="projName" required readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 outline-none cursor-not-allowed">
                                 </div>
                             </div>
                             
@@ -215,12 +216,13 @@
                         <!-- ข้อมูลการเงิน -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-green-50/50 p-4 rounded-lg border border-green-100">
                             <div>
+                                <!-- เปลี่ยนเป็น readonly และใส่ bg-gray-100 -->
                                 <label class="block text-sm font-medium text-gray-700 mb-1">งบประมาณที่ได้รับจัดสรร (บาท) <span class="text-red-500">*</span></label>
-                                <input type="number" id="allocatedBudget" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                                <input type="number" id="allocatedBudget" required readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 outline-none cursor-not-allowed">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1 text-primary">จำนวนเงินที่ขอเบิกครั้งนี้ (บาท) <span class="text-red-500">*</span></label>
-                                <input type="number" step="0.01" id="requestAmount" oninput="convertToText()" required class="w-full px-4 py-2 border border-primary rounded-lg focus:ring-2 focus:ring-primary outline-none font-bold text-lg text-primary">
+                                <input type="number" step="0.01" id="requestAmount" oninput="convertToText()" required class="w-full px-4 py-2 border border-primary rounded-lg focus:ring-2 focus:ring-primary outline-none font-bold text-lg text-primary bg-white">
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">ตัวอักษร</label>
@@ -288,7 +290,7 @@
         // ==========================================
         // ตั้งค่า URL ของ Google Apps Script ที่นี่ !!
         // ==========================================
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbyw1EGnS15FY7O-GcYAIn_NTuA3XtQ0NupwoMveQZUl6UZ-U8LWtJxRW_aTH8uWNfz6/exec'; 
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzmBOf3NutYaupDB4TgXDopV0sh58cq-DbKicmsCzJPWGKGXQyXCidDh3uvnWFNcigh/exec'; 
 
         // Global State
         let masterData = [];
@@ -321,15 +323,17 @@
                 const response = await fetch(GAS_URL + '?action=getMasterData');
                 const result = await response.json();
                 if(result.status === 'success') {
-                    masterData = result.data;
+                    masterData = Array.isArray(result.data) ? result.data : [];
                     updateDashboard(); // Update dashboard after getting master
+                } else {
+                    console.error("Master Data Error:", result.message);
                 }
             } catch (error) {
                 console.error("Error fetching Master Data:", error);
             }
         }
 
-        // ดึงข้อมูลประวัติสำหรับตาราง
+        // ดึงข้อมูลประวัติสำหรับตาราง (มีการเพิ่มการแจ้งเตือน Error ที่ชัดเจน)
         async function fetchTableData() {
             showLoading(true);
             try {
@@ -342,12 +346,24 @@
                 const result = await response.json();
                 
                 if(result.status === 'success') {
-                    requestsData = result.data;
+                    requestsData = Array.isArray(result.data) ? result.data : [];
                     renderTable(requestsData);
                     updateDashboard(); // Update dashboard after getting requests
+                } else {
+                    // หาก Backend (Code.gs) ตอบกลับมาว่าเป็น Error (เช่น หา Sheet ไม่เจอ)
+                    document.getElementById('tableBody').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-red-500">ไม่สามารถดึงข้อมูลได้: ${result.message || 'ข้อผิดพลาดจากฐานข้อมูล'}</td></tr>`;
                 }
             } catch (error) {
                 console.error("Error fetching Table Data:", error);
+                // หากเชื่อมต่อไม่ได้เลย (เช่น ติดปัญหาเรื่องสิทธิ์การเข้าถึง หรือ CORS)
+                document.getElementById('tableBody').innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-8 text-red-500">
+                            เชื่อมต่อฐานข้อมูลล้มเหลว <br>
+                            <span class="text-sm text-gray-500">กรุณาตรวจสอบว่าตั้งค่าสิทธิ์การเข้าถึง (Who has access) ของ Web App เป็น "ทุกคน (Anyone)" แล้วหรือยัง</span>
+                        </td>
+                    </tr>
+                `;
             }
             showLoading(false);
         }
@@ -392,6 +408,8 @@
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
             
+            if(!Array.isArray(data)) return;
+
             // Reverse data to show newest first
             const reversedData = [...data].reverse();
 

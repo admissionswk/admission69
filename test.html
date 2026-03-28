@@ -446,24 +446,9 @@
         // -----------------------------------------
         
         // ** ใส่ URL ของ Google Apps Script Web App ที่ได้จากการ Deploy ที่นี่ **
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxq0buQ5aI09sEh8Ar8xeWJ_4Ejvi8LW4QYRryZNkELSF2GrDmSkeBH7raNAJ71jZNN/exec'; 
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycby4D-uZaJZxajn3uY9loNzMxcPlm_z76VBoizhlpNEMJpcYPd9U4miOh7hpPkNS6Ljc/exec'; 
         
-        // Mock Data for Demo purposes (Fallback if API not set)
-        let mockData = [
-            { date: '2026-03-28', dept: 'บริหารทั่วไป', type: 'จัดซื้อ', project: 'โครงการบริหารจัดการทั่วไป', amount: 12500, status: 'รออนุมัติ' },
-            { date: '2026-03-25', dept: 'อาคารสถานที่', type: 'จัดจ้าง', project: 'กิจกรรมพัฒนาสภาพแวดล้อม', amount: 50000, status: 'อนุมัติแล้ว' },
-            { date: '2026-03-20', dept: 'วิชาการ', type: 'เบิกจ่ายเงิน', project: 'โครงการยกระดับผลสัมฤทธิ์', amount: 5500, status: 'เบิกจ่ายแล้ว' },
-        ];
-
-        // Mock Master Data (ปรับให้ตรงกับภาพ Sheet ของผู้ใช้งาน)
-        let masterData = [
-            { projCode: '1', projName: 'ค่าหนังสือเรียน 1/69', actCode: '1', actName: 'ค่าหนังสือเรียน 1/69', budget: 3940787.00 },
-            { projCode: '5', projName: 'พัฒนาประสิทธิภาพการบริหารจัดการตามนโยบายของหน่วยงานต้นสังกัด', actCode: '5.1', actName: 'การบริหารจัดการตามนโยบายและจุดเน้นของหน่วยงานต้นสังกัด', budget: 445920.00 },
-            { projCode: '5', projName: 'พัฒนาประสิทธิภาพการบริหารจัดการตามนโยบายของหน่วยงานต้นสังกัด', actCode: '5.2', actName: 'การแก้ปัญหาเชิงบูรณาการ', budget: null }, // ไม่มีงบในภาพ
-            { projCode: '5', projName: 'พัฒนาประสิทธิภาพการบริหารจัดการตามนโยบายของหน่วยงานต้นสังกัด', actCode: '5.3', actName: 'เครื่องถ่ายเอกสารความเร็วสูง', budget: 350000 },
-            { projCode: '6', projName: 'sura soft power', actCode: '6', actName: 'sura soft power', budget: 50000.00 },
-            { projCode: '8', projName: 'โครงการส่งเสริมและพัฒนาวิชาการ', actCode: '8.1.1', actName: 'จอ LED แสง สี และเครื่องเสียง หอประชุมรวมน้ำใจฯ', budget: null }
-        ];
+      
 
         function showLoading(show) {
             document.getElementById('loading').style.display = show ? 'flex' : 'none';

@@ -204,10 +204,7 @@
     <p class="mt-8 text-sm text-green-800/60 z-10 font-bold pb-8 md:pb-0 tracking-widest text-center drop-shadow-sm">
         งานรับนักเรียนโรงเรียนสุรวิทยาคาร
     </p>
-
-    <!-- Script ติดต่อกับ Google Apps Script -->
     <script>
-        // 📌📌📌 นำ URL ของ Apps Script มาใส่ตรงนี้ 📌📌📌
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLM0fsWWC5xR4os7U6ROgKBX2lQt5Uh8m5MVckSh4IGNOCkBLErG53JqPhpOGooKyl/exec"; 
 
         const searchFormWrapper = document.getElementById('searchFormWrapper');
@@ -257,8 +254,6 @@
                 const data = response.data;
                 document.getElementById('resName').textContent = `${data.prefix}${data.name} ${data.sur}`;
                 document.getElementById('resSchool').textContent = `${data.school}`;
-                
-                // 📌 แสดงข้อมูลประเภทการสอบ และ รหัสสอบ 📌
                 document.getElementById('resExamType').textContent = `ประเภท: ${data.examtype}`;
                 document.getElementById('resExamId').textContent = `รหัสสอบ: ${data.examid}`;
                 
@@ -269,8 +264,8 @@
                 document.getElementById('resSocial').textContent = data.social;
                 document.getElementById('resOverall').textContent = data.overall;
                 
-                // 📌 แสดงข้อมูลลำดับที่ 📌
-                document.getElementById('resRank').textContent = data.rank;
+               
+              //  document.getElementById('resRank').textContent = data.rank;
 
                 searchFormWrapper.classList.add('hidden');
                 resultSection.classList.remove('hidden');

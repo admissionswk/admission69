@@ -4,43 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ประกาศผลสอบเข้า ม.1/ม.4</title>
+    <!-- เรียกใช้งาน Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- เรียกใช้งาน Icons (Phosphor Icons) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- ฟอนต์ Noto Sans Thai -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Noto Sans Thai', sans-serif; }
         .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .glass-panel { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07); }
-        .glass-card { background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.5); }
+        /* สไตล์เสริมสำหรับ Liquid Glass */
+        .glass-panel { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07); }
+        .glass-card { background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.5); }
         .glass-input { background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(255, 255, 255, 0.7); }
         .glass-input:focus { background: rgba(255, 255, 255, 0.8); border-color: rgba(251, 191, 36, 0.8); }
     </style>
 </head>
 <body class="min-h-screen bg-slate-50 text-gray-800 flex flex-col items-center justify-start md:justify-center py-8 px-4 md:p-4 relative overflow-x-hidden">
 
+    <!-- แสงออร่าสีเขียวและทอง -->
     <div class="fixed top-[-5%] left-[-5%] w-[40rem] h-[40rem] bg-green-300/40 rounded-full mix-blend-multiply filter blur-[120px] z-0 pointer-events-none"></div>
     <div class="fixed bottom-[-10%] right-[-5%] w-[45rem] h-[45rem] bg-amber-200/50 rounded-full mix-blend-multiply filter blur-[120px] z-0 pointer-events-none"></div>
 
+    <!-- โลโก้ตรงกลางที่มองทะลุกระจก (Watermark) -->
     <div class="fixed inset-0 flex items-center justify-center z-0 pointer-events-none">
-        <img src="https://scontent-bkk1-2.xx.fbcdn.net/v/t39.30808-6/661891893_10243355785530651_7219000716983370039_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=13d280&_nc_eui2=AeG142RZDd8UfuTdnfBsqoXnXYDdX6CP9OFdgN1foI_04Wmkg2UJu-OHqoOniwEsgm8&_nc_ohc=n3KhrJw7EmIQ7kNvwFpFIQy&_nc_oc=AdoRvza5FaRfkrCBsjYeze7MFykNQcZh8-Qia9zn4l9GCSgj1smgzt7vEo1VnNnYyjs&_nc_zt=23&_nc_ht=scontent-bkk1-2.xx&_nc_gid=SlzaS0xb8bl23OvPrblWXw&_nc_ss=7a3a8&oh=00_Af0AaZrAHm0YWcAQS577WLbWmv1f5gWenst74GJbCj1GWA&oe=69D3A81F" alt="โลโก้พื้นหลัง" class="w-[65%] md:w-[45%] max-w-md object-contain opacity-30 drop-shadow-2xl">
+        <img src="https://placehold.co/800x800/15803d/ffffff?text=LOGO" alt="โลโก้พื้นหลัง" class="w-[65%] md:w-[45%] max-w-md object-contain opacity-30 drop-shadow-2xl">
     </div>
 
+    <!-- กล่องเนื้อหาหลัก (Liquid Glass) -->
     <div class="w-full max-w-4xl glass-panel rounded-[2.5rem] overflow-hidden z-10 relative transition-all duration-500">
+        <!-- แสงสะท้อนขอบบนของกระจก -->
         <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-80"></div>
 
+        <!-- ส่วนหัว -->
         <div class="p-8 md:p-10 text-center relative border-b border-white/50">
             <div class="inline-flex items-center justify-center p-3 glass-card rounded-full mb-4 shadow-sm relative">
-                <img src="https://scontent-bkk1-2.xx.fbcdn.net/v/t39.30808-6/661891893_10243355785530651_7219000716983370039_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=13d280&_nc_eui2=AeG142RZDd8UfuTdnfBsqoXnXYDdX6CP9OFdgN1foI_04Wmkg2UJu-OHqoOniwEsgm8&_nc_ohc=n3KhrJw7EmIQ7kNvwFpFIQy&_nc_oc=AdoRvza5FaRfkrCBsjYeze7MFykNQcZh8-Qia9zn4l9GCSgj1smgzt7vEo1VnNnYyjs&_nc_zt=23&_nc_ht=scontent-bkk1-2.xx&_nc_gid=SlzaS0xb8bl23OvPrblWXw&_nc_ss=7a3a8&oh=00_Af0AaZrAHm0YWcAQS577WLbWmv1f5gWenst74GJbCj1GWA&oe=69D3A81F" alt="โลโก้โรงเรียน" class="w-14 h-14 object-contain rounded-full">
+                <img src="https://placehold.co/100x100/15803d/ffffff?text=LOGO" alt="โลโก้โรงเรียน" class="w-14 h-14 object-contain rounded-full">
             </div>
-            <h1 class="text-3xl md:text-4xl font-extrabold text-green-900 mb-2 tracking-tight drop-shadow-sm">ประกาศผลคะแนนการสอบเข้า ม.1 ม.4</h1>
-            <p class="text-amber-700 font-semibold text-sm md:text-base tracking-wide bg-white/40 inline-block px-4 py-1 rounded-full border border-white/60">ประจำปีการศึกษา 2569</p>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-green-900 mb-2 tracking-tight drop-shadow-sm">ประกาศผลสอบเข้า</h1>
+            <p class="text-amber-700 font-semibold text-sm md:text-base tracking-wide bg-white/40 inline-block px-4 py-1 rounded-full border border-white/60">
+                ประจำปีการศึกษา 2567
+            </p>
         </div>
 
         <div class="p-6 md:p-10 relative">
+            <!-- ฟอร์มค้นหา -->
             <div id="searchFormWrapper" class="max-w-md mx-auto relative z-10">
                 <form id="searchForm" class="space-y-6">
                     
+                    <!-- Dropdown เลือกประเภทการสอบ -->
                     <div>
                         <label class="block text-sm font-bold text-green-900 mb-2 drop-shadow-sm">ประเภทการสอบ</label>
                         <div class="relative">
@@ -69,6 +82,7 @@
                         </div>
                     </div>
 
+                    <!-- กล่องรหัสผ่าน (จะถูกซ่อนอัตโนมัติถ้าเลือก ม.4 ม.3 เดิม) -->
                     <div id="passwordFieldWrapper" class="transition-all duration-300">
                         <label class="block text-sm font-bold text-green-900 mb-2 drop-shadow-sm">รหัสผ่าน <span class="text-xs text-gray-600 font-medium">(เลขประจำตัวประชาชน)</span></label>
                         <div class="relative">
@@ -79,6 +93,7 @@
                         </div>
                     </div>
 
+                    <!-- กล่องแสดงข้อความ Error -->
                     <div id="errorMessage" class="hidden p-4 glass-card bg-red-100/60 border-red-200/80 text-red-700 rounded-2xl text-sm text-center font-bold shadow-sm"></div>
 
                     <button type="submit" id="submitBtn" class="w-full flex justify-center items-center py-4 px-4 rounded-2xl shadow-[0_4px_15px_rgba(245,158,11,0.3)] text-base font-bold text-white bg-gradient-to-r from-amber-500/90 to-amber-400/90 hover:from-amber-500 hover:to-amber-400 border border-amber-300/50 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-400 transition-all mt-8 disabled:opacity-50">
@@ -87,8 +102,11 @@
                 </form>
             </div>
 
+            <!-- หน้าแสดงผลลัพธ์ -->
             <div id="resultSection" class="hidden fade-in relative z-10">
                 <div class="flex flex-col md:flex-row gap-8 items-stretch">
+                    
+                    <!-- ด้านซ้าย: ข้อมูลผู้เข้าสอบ -->
                     <div class="w-full md:w-1/3 flex flex-col items-center justify-center text-center p-8 glass-card rounded-3xl relative overflow-hidden group">
                         <div class="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                         <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/60 backdrop-blur-md border border-white/80 shadow-sm mb-5 relative z-10">
@@ -98,15 +116,18 @@
                         <div class="flex flex-col items-center text-sm text-gray-700 gap-1.5 relative z-10 font-medium">
                             <span class="flex items-center gap-1.5"><i class="ph ph-buildings text-amber-600"></i><span id="resSchool">โรงเรียน: -</span></span>
                         </div>
+                        
                         <div class="mt-5 w-full space-y-2">
                             <div class="inline-block w-full px-4 py-2 glass-input text-green-800 rounded-xl text-sm font-bold shadow-sm relative z-10" id="resExamType">ประเภท: -</div>
                             <div class="inline-block w-full px-4 py-2 glass-input text-amber-700 rounded-xl text-sm font-bold shadow-sm relative z-10" id="resExamId">รหัสสอบ: -</div>
                         </div>
+                        
                         <button type="button" onclick="resetForm()" class="mt-8 w-full flex items-center justify-center gap-2 py-3 px-4 border border-white/80 rounded-xl text-sm font-bold text-green-800 bg-white/40 hover:bg-white/70 backdrop-blur-sm transition-all relative z-10 shadow-sm">
                             <i class="ph ph-arrow-left"></i> ค้นหาข้อมูลอื่น
                         </button>
                     </div>
 
+                    <!-- ด้านขวา: คะแนนสอบ -->
                     <div class="w-full md:w-2/3 flex flex-col justify-between relative z-10">
                         <div>
                             <h3 class="text-sm font-bold text-amber-700 uppercase tracking-widest flex items-center gap-2 border-b border-white/50 pb-4 mb-6 drop-shadow-sm">
@@ -136,6 +157,7 @@
                             </div>
                         </div>
 
+                        <!-- กล่องคะแนนรวมและอันดับ -->
                         <div class="mt-8 relative overflow-hidden rounded-3xl shadow-xl shadow-green-900/10">
                             <div class="absolute inset-0 bg-green-700/80 backdrop-blur-xl border border-green-400/50"></div>
                             <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent"></div>
@@ -148,7 +170,15 @@
                                     </div>
                                     <div class="text-white font-bold text-lg md:text-xl drop-shadow-md">สรุปผลสอบ</div>
                                 </div>
-                               
+
+                                <div class="flex items-center gap-6 sm:gap-8 bg-black/20 px-6 py-3 rounded-2xl border border-white/10 w-full sm:w-auto justify-center">
+                                    <div class="text-center sm:text-right">
+                                        <div class="text-green-200 font-medium text-xs mb-1 tracking-wider uppercase">Rank</div>
+                                        <div class="flex items-baseline gap-1 justify-center sm:justify-end">
+                                            <span class="text-xl font-bold text-white/80">#</span>
+                                            <span id="resRank" class="text-4xl md:text-5xl font-black text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.2)]">-</span>
+                                        </div>
+                                    </div>
                                     <div class="w-px h-12 bg-white/30 hidden sm:block"></div>
                                     <div class="text-center sm:text-right">
                                         <div class="text-green-200 font-medium text-xs mb-1 tracking-wider uppercase">Total</div>
@@ -165,9 +195,10 @@
     
     <p class="mt-8 text-sm text-green-800/60 z-10 font-bold pb-8 md:pb-0 tracking-widest text-center drop-shadow-sm">POWERED BY SCHOOL ACADEMIC SYSTEM</p>
 
+    <!-- Script ติดต่อกับ Google Apps Script -->
     <script>
-        // 📌📌📌 นำ URL ของ Apps Script มาใส่ตรงนี้ 📌📌📌
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynFkUii7EreHZKSvx7LT1bILob7IoU9jkT3Hx-xx5SY7UQ3y8AL0wk2-k-XQGrHbxU/exec"; 
+        // 📌📌📌 นำ URL ของ Apps Script (ที่ลงท้ายด้วย /exec) มาใส่ตรงนี้ 📌📌📌
+        const SCRIPT_URL = "https://script.google.com/macros/s/ใส่รหัสของคุณตรงนี้/exec"; 
 
         const searchFormWrapper = document.getElementById('searchFormWrapper');
         const searchForm = document.getElementById('searchForm');
@@ -175,18 +206,17 @@
         const errorMessage = document.getElementById('errorMessage');
         const submitBtn = document.getElementById('submitBtn');
         
-        // 📌 ตัวแปรอ้างอิงถึงช่องกรอกรหัสผ่าน 📌
         const examTypeSelect = document.getElementById('examType');
         const passwordFieldWrapper = document.getElementById('passwordFieldWrapper');
         const idCardInput = document.getElementById('idCard');
 
-        // 📌 ฟังก์ชันตรวจสอบเมื่อเปลี่ยนประเภทการสอบ 📌
+        // ตรวจสอบเมื่อมีการเปลี่ยนประเภทการสอบ
         examTypeSelect.addEventListener('change', function() {
-            // ถ้าเลือก ม.4 (ม.3 เดิม) ให้ซ่อนกล่องรหัสผ่าน และยกเลิก required
+            // ซ่อนกล่องรหัสผ่านถ้าเลือก ม.4 ม.3 เดิม (m4swk)
             if (this.value === 'm4swk') {
                 passwordFieldWrapper.classList.add('hidden');
                 idCardInput.required = false;
-                idCardInput.value = ''; // เคลียร์ค่าที่พิมพ์ค้างไว้ทิ้ง
+                idCardInput.value = ''; 
             } else {
                 passwordFieldWrapper.classList.remove('hidden');
                 idCardInput.required = true;
@@ -216,7 +246,7 @@
                 try {
                     data = JSON.parse(text);
                 } catch (parseError) {
-                    throw new Error("System Overload");
+                    throw new Error("ระบบตอบกลับข้อมูลผิดพลาด กรุณาลองใหม่อีกครั้ง");
                 }
                 onSuccess(data);
 
@@ -250,8 +280,6 @@
                 searchFormWrapper.classList.add('hidden');
                 resultSection.classList.remove('hidden');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else if (response.status === 'busy') {
-                showError(response.message);
             } else {
                 showError(response.message);
             }
@@ -260,7 +288,7 @@
         function onFailure(error) {
             submitBtn.disabled = false;
             submitBtn.innerHTML = 'ตรวจสอบผลคะแนน';
-            showError("กรุณาเว้นระยะเวลาการเข้าชมผลคะแนน เนื่องจากไม่สามารถรองรับการเข้าชมพร้อมกันจำนวนมากได้");
+            showError("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่อีกครั้ง");
         }
 
         function showError(msg) {
@@ -273,7 +301,6 @@
             document.getElementById('idCard').value = '';
             
             document.getElementById('examType').selectedIndex = 0;
-            // เมื่อรีเซ็ต ให้เอากล่องรหัสผ่านกลับมาโชว์เป็นค่าเริ่มต้น
             passwordFieldWrapper.classList.remove('hidden');
             idCardInput.required = true;
             

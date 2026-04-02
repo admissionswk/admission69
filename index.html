@@ -40,7 +40,7 @@
     <div class="fixed bottom-[-10%] right-[-5%] w-[45rem] h-[45rem] bg-amber-200/50 rounded-full mix-blend-multiply filter blur-[120px] z-0 pointer-events-none"></div>
 
     <div class="fixed inset-0 flex items-center justify-center z-0 pointer-events-none">
-        <img src="https://scontent-bkk1-1.xx.fbcdn.net/v/t39.30808-6/647366081_1491780026290840_6359285124854972708_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=1d70fc&_nc_ohc=RFrDfAbVga4Q7kNvwF48niA&_nc_oc=AdqvKyWYOwhNLOkbsKbJ1eS8YxGEjWrFcWy_1aF9jKBHn2cVUQt9yLR3FdwRwdWv6p4&_nc_zt=23&_nc_ht=scontent-bkk1-1.xx&_nc_gid=QcOm1qUyEhNZHZS8aBxAew&_nc_ss=7a3a8&oh=00_AfxHrub5ZX07SVMIFP_klvFUsCiqnTaaMPiAOqaHVlgyAA&oe=69D12C28" alt="โลโก้พื้นหลัง" 
+        <img src="https://placehold.co/800x800/15803d/ffffff?text=LOGO" alt="โลโก้พื้นหลัง" 
              class="w-[65%] md:w-[45%] max-w-md object-contain opacity-30 drop-shadow-2xl">
     </div>
 
@@ -49,18 +49,42 @@
 
         <div class="p-8 md:p-10 text-center relative border-b border-white/50">
             <div class="inline-flex items-center justify-center p-3 glass-card rounded-full mb-4 shadow-sm relative">
-                <img src="https://scontent-bkk1-1.xx.fbcdn.net/v/t39.30808-6/647366081_1491780026290840_6359285124854972708_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=1d70fc&_nc_ohc=RFrDfAbVga4Q7kNvwF48niA&_nc_oc=AdqvKyWYOwhNLOkbsKbJ1eS8YxGEjWrFcWy_1aF9jKBHn2cVUQt9yLR3FdwRwdWv6p4&_nc_zt=23&_nc_ht=scontent-bkk1-1.xx&_nc_gid=QcOm1qUyEhNZHZS8aBxAew&_nc_ss=7a3a8&oh=00_AfxHrub5ZX07SVMIFP_klvFUsCiqnTaaMPiAOqaHVlgyAA&oe=69D12C28" alt="โลโก้โรงเรียน" class="w-14 h-14 object-contain rounded-full">
+                <img src="https://placehold.co/100x100/15803d/ffffff?text=LOGO" alt="โลโก้โรงเรียน" class="w-14 h-14 object-contain rounded-full">
             </div>
             
-            <h1 class="text-3xl md:text-4xl font-extrabold text-green-900 mb-2 tracking-tight drop-shadow-sm">ประกาศผลคะแนน</h1>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-green-900 mb-2 tracking-tight drop-shadow-sm">ประกาศผลสอบเข้า</h1>
             <p class="text-amber-700 font-semibold text-sm md:text-base tracking-wide bg-white/40 inline-block px-4 py-1 rounded-full border border-white/60">
-                การสอบเข้าเรียนระดับชั้นมัธยมศึกษาปีที่ 1 
+                ประจำปีการศึกษา 2567
             </p>
         </div>
 
         <div class="p-6 md:p-10 relative">
             <div id="searchFormWrapper" class="max-w-md mx-auto relative z-10">
                 <form id="searchForm" class="space-y-6">
+                    
+                    <!-- 📌 เพิ่ม Dropdown เลือกประเภทการสอบ 📌 -->
+                    <div>
+                        <label class="block text-sm font-bold text-green-900 mb-2 drop-shadow-sm">ประเภทการสอบ</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="ph ph-list-dashes text-xl text-green-700"></i>
+                            </div>
+                            <!-- 
+                                ค่า value="..." ต้องตรงกับชื่อชีต (Tab) ใน Google Sheets เป๊ะๆ
+                            -->
+                            <select id="examType" required
+                                class="block w-full pl-12 pr-10 py-4 glass-input rounded-2xl transition-all outline-none text-gray-800 font-medium shadow-inner appearance-none cursor-pointer">
+                                <option value="" disabled selected>-- กรุณาเลือกประเภทการสอบ --</option>
+                                <option value="m1normal">ม.1 ทั่วไป</option>
+                                <option value="m4swk">ม.4 (ม.3 เดิม)</option>
+                                <option value="m4general">ม.4 ทั่วไป</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                <i class="ph ph-caret-down text-gray-500 font-bold"></i>
+                            </div>
+                        </div>
+                    </div>
+
                     <div>
                         <label class="block text-sm font-bold text-green-900 mb-2 drop-shadow-sm">รหัสผู้เข้าสอบ</label>
                         <div class="relative">
@@ -109,7 +133,6 @@
                             <span class="flex items-center gap-1.5"><i class="ph ph-buildings text-amber-600"></i><span id="resSchool">โรงเรียน: -</span></span>
                         </div>
                         
-                        <!-- 📌 เพิ่มการแสดง "ประเภทการสอบ" 📌 -->
                         <div class="mt-5 w-full space-y-2">
                             <div class="inline-block w-full px-4 py-2 glass-input text-green-800 rounded-xl text-sm font-bold shadow-sm relative z-10" id="resExamType">
                                 ประเภท: -
@@ -156,7 +179,7 @@
                             </div>
                         </div>
 
-                        <!-- 📌 กล่องคะแนนรวมและอันดับ (ปรับเลย์เอาต์ใหม่) 📌 -->
+                        <!-- กล่องคะแนนรวมและอันดับ -->
                         <div class="mt-8 relative overflow-hidden rounded-3xl shadow-xl shadow-green-900/10">
                             <div class="absolute inset-0 bg-green-700/80 backdrop-blur-xl border border-green-400/50"></div>
                             <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent"></div>
@@ -164,33 +187,26 @@
                             
                             <div class="relative z-10 p-6 md:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
                                 
-                                <!-- ไอคอนและข้อความ -->
                                 <div class="flex items-center gap-4 w-full sm:w-auto">
                                     <div class="p-3 bg-white/20 rounded-2xl border border-white/30 backdrop-blur-md shadow-inner">
                                         <i class="ph ph-medal text-3xl text-amber-300 drop-shadow-md"></i>
                                     </div>
                                     <div class="text-white font-bold text-lg md:text-xl drop-shadow-md">สรุปผลสอบ</div>
-
                                 </div>
 
-                                <!-- โซนแสดงคะแนนและลำดับ -->
                                 <div class="flex items-center gap-6 sm:gap-8 bg-black/20 px-6 py-3 rounded-2xl border border-white/10 w-full sm:w-auto justify-center">
-                                    <!-- ลำดับที่ 
                                     <div class="text-center sm:text-right">
-                                        <div class="text-green-200 font-medium text-xs mb-1 tracking-wider uppercase">ลำดับที่สอบได้</div>
+                                        <div class="text-green-200 font-medium text-xs mb-1 tracking-wider uppercase">Rank</div>
                                         <div class="flex items-baseline gap-1 justify-center sm:justify-end">
-                                            <span class="text-xl font-bold text-white/80"></span>
+                                            <span class="text-xl font-bold text-white/80">#</span>
                                             <span id="resRank" class="text-4xl md:text-5xl font-black text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.2)]">-</span>
                                         </div>
                                     </div>
-                                    -->
                                     
-                                    <!-- เส้นแบ่ง -->
                                     <div class="w-px h-12 bg-white/30 hidden sm:block"></div>
                                     
-                                    <!-- คะแนนรวม -->
                                     <div class="text-center sm:text-right">
-                                        <div class="text-green-200 font-medium text-xs mb-1 tracking-wider uppercase">คะแนนรวม</div>
+                                        <div class="text-green-200 font-medium text-xs mb-1 tracking-wider uppercase">Total</div>
                                         <div id="resOverall" class="text-4xl md:text-5xl font-black text-amber-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.2)]">-</div>
                                     </div>
                                 </div>
@@ -204,10 +220,13 @@
     </div>
     
     <p class="mt-8 text-sm text-green-800/60 z-10 font-bold pb-8 md:pb-0 tracking-widest text-center drop-shadow-sm">
-        งานรับนักเรียนโรงเรียนสุรวิทยาคาร
+        POWERED BY SCHOOL ACADEMIC SYSTEM
     </p>
+
+    <!-- Script ติดต่อกับ Google Apps Script -->
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLM0fsWWC5xR4os7U6ROgKBX2lQt5Uh8m5MVckSh4IGNOCkBLErG53JqPhpOGooKyl/exec"; 
+        // 📌📌📌 นำ URL ของ Apps Script มาใส่ตรงนี้ 📌📌📌
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzuw7JSVrr4OgTrz4-vwQhSGy_DdzaUs9F9LWM6Sj9KqY8K1pALB1m0u3rzIYtq7Yap/exec"; 
 
         const searchFormWrapper = document.getElementById('searchFormWrapper');
         const searchForm = document.getElementById('searchForm');
@@ -222,6 +241,8 @@
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="ph ph-spinner animate-spin text-xl mr-2"></i> กำลังค้นหา...';
 
+            // ดึงค่าประเภทการสอบมาด้วย
+            const examType = document.getElementById('examType').value;
             const examId = document.getElementById('examId').value;
             const idCard = document.getElementById('idCard').value;
 
@@ -229,7 +250,8 @@
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ examId: examId, idCard: idCard })
+                    // ส่งตัวแปร sheetName เพิ่มเข้าไป
+                    body: JSON.stringify({ sheetName: examType, examId: examId, idCard: idCard })
                 });
 
                 const text = await response.text();
@@ -256,18 +278,19 @@
                 const data = response.data;
                 document.getElementById('resName').textContent = `${data.prefix}${data.name} ${data.sur}`;
                 document.getElementById('resSchool').textContent = `${data.school}`;
-                document.getElementById('resExamType').textContent = `ประเภท: ${data.examtype}`;
-                document.getElementById('resExamId').textContent = `รหัสสอบ: ${data.examid}`;
                 
+                // ตรวจสอบว่าดึงประเภทมาจาก Sheet หรือให้ใช้ชื่อจาก Dropdown ถ้ายาวเกิน
+                const dropdownText = document.getElementById('examType').options[document.getElementById('examType').selectedIndex].text;
+                document.getElementById('resExamType').textContent = `ประเภท: ${data.examtype !== '-' ? data.examtype : dropdownText}`;
+                
+                document.getElementById('resExamId').textContent = `รหัสสอบ: ${data.examid}`;
                 document.getElementById('resSci').textContent = data.sci;
                 document.getElementById('resMath').textContent = data.math;
                 document.getElementById('resEng').textContent = data.eng;
                 document.getElementById('resThai').textContent = data.thai;
                 document.getElementById('resSocial').textContent = data.social;
                 document.getElementById('resOverall').textContent = data.overall;
-                
-               
-              //  document.getElementById('resRank').textContent = data.rank;
+                document.getElementById('resRank').textContent = data.rank;
 
                 searchFormWrapper.classList.add('hidden');
                 resultSection.classList.remove('hidden');
@@ -294,6 +317,10 @@
         function resetForm() {
             document.getElementById('examId').value = '';
             document.getElementById('idCard').value = '';
+            
+            // ให้รีเซ็ต Dropdown กลับไปที่ค่าเริ่มต้นด้วย
+            document.getElementById('examType').selectedIndex = 0;
+            
             errorMessage.classList.add('hidden');
             
             resultSection.classList.add('hidden');

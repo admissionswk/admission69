@@ -173,11 +173,6 @@
 
                                 <div class="flex items-center gap-6 sm:gap-8 bg-black/20 px-6 py-3 rounded-2xl border border-white/10 w-full sm:w-auto justify-center">
                                     <div class="text-center sm:text-right">
-                                        <div class="text-green-200 font-medium text-xs mb-1 tracking-wider uppercase">Rank</div>
-                                        
-                                    </div>
-                                    <div class="w-px h-12 bg-white/30 hidden sm:block"></div>
-                                    <div class="text-center sm:text-right">
                                         <div class="text-green-200 font-medium text-xs mb-1 tracking-wider uppercase">Total</div>
                                         <div id="resOverall" class="text-4xl md:text-5xl font-black text-amber-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.2)]">-</div>
                                     </div>
@@ -195,7 +190,7 @@
     <!-- Script ติดต่อกับ Google Apps Script -->
     <script>
         // 📌📌📌 นำ URL ของ Apps Script (ที่ลงท้ายด้วย /exec) มาใส่ตรงนี้ 📌📌📌
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx0mYuXbwVSb1c1VYQNwA5hF30cDyjzngRre53hFhhpLkkn_9toQdpvg0oJGq4rE3oP/exec"; 
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxbsKqKCBtK8xoB2hQhsB3aeX5FBO8FokByWrj9jVSKH2a1C04anS_h9QIxrQ-2KMCL/exec"; 
 
         const searchFormWrapper = document.getElementById('searchFormWrapper');
         const searchForm = document.getElementById('searchForm');
@@ -272,7 +267,6 @@
                 document.getElementById('resThai').textContent = data.thai;
                 document.getElementById('resSocial').textContent = data.social;
                 document.getElementById('resOverall').textContent = data.overall;
-                document.getElementById('resRank').textContent = data.rank;
 
                 searchFormWrapper.classList.add('hidden');
                 resultSection.classList.remove('hidden');

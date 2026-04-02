@@ -29,7 +29,7 @@
 
     <!-- โลโก้ตรงกลางที่มองทะลุกระจก (Watermark) -->
     <div class="fixed inset-0 flex items-center justify-center z-0 pointer-events-none">
-        <img src="https://placehold.co/800x800/15803d/ffffff?text=LOGO" alt="โลโก้พื้นหลัง" class="w-[65%] md:w-[45%] max-w-md object-contain opacity-30 drop-shadow-2xl">
+        <img src="https://scontent-bkk1-2.xx.fbcdn.net/v/t39.30808-6/661891893_10243355785530651_7219000716983370039_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=13d280&_nc_eui2=AeG142RZDd8UfuTdnfBsqoXnXYDdX6CP9OFdgN1foI_04Wmkg2UJu-OHqoOniwEsgm8&_nc_ohc=n3KhrJw7EmIQ7kNvwFpFIQy&_nc_oc=AdoRvza5FaRfkrCBsjYeze7MFykNQcZh8-Qia9zn4l9GCSgj1smgzt7vEo1VnNnYyjs&_nc_zt=23&_nc_ht=scontent-bkk1-2.xx&_nc_gid=3G-4DCmh36Y9yzbe2C5RAQ&_nc_ss=7a3a8&oh=00_Af2Jm7nhuIYxTcS466ZTEzb0vdH29WgFelhnzThNZWUsLg&oe=69D3A81F" alt="โลโก้พื้นหลัง" class="w-[65%] md:w-[45%] max-w-md object-contain opacity-30 drop-shadow-2xl">
     </div>
 
     <!-- กล่องเนื้อหาหลัก (Liquid Glass) -->
@@ -40,11 +40,11 @@
         <!-- ส่วนหัว -->
         <div class="p-8 md:p-10 text-center relative border-b border-white/50">
             <div class="inline-flex items-center justify-center p-3 glass-card rounded-full mb-4 shadow-sm relative">
-                <img src="https://placehold.co/100x100/15803d/ffffff?text=LOGO" alt="โลโก้โรงเรียน" class="w-14 h-14 object-contain rounded-full">
+                <img src="https://scontent-bkk1-1.xx.fbcdn.net/v/t39.30808-6/559385222_25701077026148178_2290377065839621422_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=f798df&_nc_eui2=AeETcHY8K9BNmH61ZmawqiZjlONwm8NGRKWU43Cbw0ZEpaQatYalBKpX7YQVYyEf6C4&_nc_ohc=iWQawfgConYQ7kNvwEmH7j6&_nc_oc=Adr9NInGWa_pF25VF6BWtX2nD7agQgUwfWhR3E1PfDzEEExRIvjiEQeek-0FAMwit_k&_nc_zt=23&_nc_ht=scontent-bkk1-1.xx&_nc_gid=e2wyB-_-Khhkq2yhFCpzMQ&_nc_ss=7a3a8&oh=00_Af1H866TIh8fhHJkeTkLZNE17J9sGptP2NdviQoAgapg0Q&oe=69D3D19C" alt="โลโก้โรงเรียน" class="w-14 h-14 object-contain rounded-full">
             </div>
-            <h1 class="text-3xl md:text-4xl font-extrabold text-green-900 mb-2 tracking-tight drop-shadow-sm">ประกาศผลสอบเข้า</h1>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-green-900 mb-2 tracking-tight drop-shadow-sm">ระบบตรวจสอบคะแนนการสอบเข้าเรียน ม.1 ม.4</h1>
             <p class="text-amber-700 font-semibold text-sm md:text-base tracking-wide bg-white/40 inline-block px-4 py-1 rounded-full border border-white/60">
-                ประจำปีการศึกษา 2567
+                ประจำปีการศึกษา 2569
             </p>
         </div>
 
@@ -62,7 +62,7 @@
                             </div>
                             <select id="examType" required class="block w-full pl-12 pr-10 py-4 glass-input rounded-2xl transition-all outline-none text-gray-800 font-medium shadow-inner appearance-none cursor-pointer">
                                 <option value="" disabled selected>-- กรุณาเลือกประเภทการสอบ --</option>
-                                <option value="m1normal">ม.1 ทั่วไป</option>
+                                <option value="m1normal">ม.1</option>
                                 <option value="m4swk">ม.4 (ม.3 เดิม)</option>
                                 <option value="m4general">ม.4 ทั่วไป</option>
                             </select>
@@ -173,15 +173,11 @@
 
                                 <div class="flex items-center gap-6 sm:gap-8 bg-black/20 px-6 py-3 rounded-2xl border border-white/10 w-full sm:w-auto justify-center">
                                     <div class="text-center sm:text-right">
-                                        <div class="text-green-200 font-medium text-xs mb-1 tracking-wider uppercase">Rank</div>
-                                        <div class="flex items-baseline gap-1 justify-center sm:justify-end">
-                                            <span class="text-xl font-bold text-white/80">#</span>
-                                            <span id="resRank" class="text-4xl md:text-5xl font-black text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.2)]">-</span>
-                                        </div>
+                                   
                                     </div>
                                     <div class="w-px h-12 bg-white/30 hidden sm:block"></div>
                                     <div class="text-center sm:text-right">
-                                        <div class="text-green-200 font-medium text-xs mb-1 tracking-wider uppercase">Total</div>
+                                        <div class="text-green-200 font-medium text-xs mb-1 tracking-wider uppercase">คะแนนรวม</div>
                                         <div id="resOverall" class="text-4xl md:text-5xl font-black text-amber-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.2)]">-</div>
                                     </div>
                                 </div>
@@ -193,9 +189,7 @@
         </div>
     </div>
     
-    <p class="mt-8 text-sm text-green-800/60 z-10 font-bold pb-8 md:pb-0 tracking-widest text-center drop-shadow-sm">POWERED BY SCHOOL ACADEMIC SYSTEM</p>
-
-    <!-- Script ติดต่อกับ Google Apps Script -->
+    <p class="mt-8 text-sm text-green-800/60 z-10 font-bold pb-8 md:pb-0 tracking-widest text-center drop-shadow-sm">งานรับนักเรียนสุรวิทยาคาร</p>
     <script>
         // 📌📌📌 นำ URL ของ Apps Script (ที่ลงท้ายด้วย /exec) มาใส่ตรงนี้ 📌📌📌
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzX_qCAlKkWOAadw2TarQqAov2Sf5g_5jTFdb_-dpgFaVH5nIrHRq2dDtUnBeRzhpVf/exec"; 

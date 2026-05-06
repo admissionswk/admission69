@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบทะเบียนและวัดผล - สุรวิทยาคาร</title>
+    <!-- โหลด Font Sarabun สำหรับภาษาไทย -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* ธีมสี เขียว-เหลือง สุรวิทยาคาร */
+            --surin-green: #006633;
+            --surin-green-hover: #004d26;
+            --surin-yellow: #FFCC00;
+            --surin-yellow-hover: #e6b800;
+            
+            /* Glassmorphism Variables */
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 102, 51, 0.15); /* เงาสีเขียวอ่อนๆ */
+            
+            --text-primary: #1d1d1f;
+            --text-secondary: #4a5568;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-primary);
+            /* พื้นหลังไล่สี เขียวอ่อน ไป เหลืองอ่อน */
+            background: linear-gradient(135deg, #dcedc8 0%, #fff9c4 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Glassmorphism Container */
+        .glass-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--glass-shadow);
+            width: 90%;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .school-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: contain;
+            background: white;
+            padding: 5px;
+            box-shadow: 0 4px 15px rgba(0, 102, 51, 0.2);
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+        
+        .school-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .header-section h2 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 28px;
+            color: var(--surin-green);
+            letter-spacing: -0.5px;
+        }
+
+        .header-section p {
+            margin: 5px 0 0 0;
+            color: var(--text-secondary);
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        /* กล่องค้นหา */
+        .search-box {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 180px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--surin-green);
+            padding-left: 5px;
+        }
+
+        .form-group select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 102, 51, 0.2);
+            padding: 12px 16px;
+            font-size: 16px;
+            border-radius: 12px;
+            font-family: inherit;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            /* ไอคอนลูกศรสีเขียว */
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23006633%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat, repeat;
+            background-position: right .7em top 50%, 0 0;
+            background-size: .65em auto, 100%;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--surin-green);
+            box-shadow: 0 0 0 3px rgba(0, 102, 51, 0.2);
+        }
+
+        /* ปุ่มค้นหา (เขียว -> เหลือง) */
+        .btn-search {
+            background-color: var(--surin-green);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 25px;
+            box-shadow: 0 4px 10px rgba(0, 102, 51, 0.3);
+        }
+
+        .btn-search:hover {
+            background-color: var(--surin-yellow);
+            color: var(--surin-green-hover); /* ตัวหนังสือสีเขียวเข้มเวลากดปุ่มเหลือง */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 204, 0, 0.5);
+        }
+
+        .btn-search:active {
+            transform: translateY(0);
+        }
+
+        /* ส่วนแสดงผลลัพธ์ */
+        #result-section {
+            display: none;
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--surin-green);
+        }
+
+        /* ตาราง */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255,255,255,0.9);
+        }
+
+        table th, table td {
+            padding: 16px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        table th {
+            background: rgba(0, 102, 51, 0.05);
+            font-weight: 600;
+            color: var(--surin-green);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        table td:nth-child(2) {
+            text-align: left;
+        }
+
+        table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        table tr:hover td {
+            background-color: rgba(255, 255, 255, 1);
+        }
+
+        /* ลิงก์รายวิชา */
+        .subject-link {
+            color: var(--surin-green);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 14px;
+            background: rgba(0, 102, 51, 0.1); /* พื้นหลังสีเขียวอ่อนๆ */
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .subject-link:hover {
+            background: var(--surin-yellow);
+            color: var(--surin-green-hover);
+            box-shadow: 0 2px 8px rgba(255, 204, 0, 0.4);
+        }
+        
+        .subject-link::after {
+            content: "➔";
+            font-size: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #d32f2f;
+            font-weight: 500;
+            padding: 30px;
+            background: rgba(211, 47, 47, 0.1);
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .glass-container {
+                padding: 20px;
+                margin: 20px auto;
+                width: 95%;
+            }
+            .form-group {
+                min-width: 100%;
+            }
+            .btn-search {
+                width: 100%;
+                margin-top: 10px;
+            }
+            table th, table td {
+                padding: 10px 8px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-container">
+        
+        <div class="header-section">
+            <img src="https://scontent.fbkk13-3.fna.fbcdn.net/v/t39.30808-6/559385222_25701077026148178_2290377065839621422_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=f798df&_nc_ohc=kmDXYRaXuUIQ7kNvwFt4zGe&_nc_oc=Adrr7ZvMxS23zBMh8RZOZpykix-Ta12tk8TnI5jWZkuKl2Q-rXX3stplKcBJKX7riLc&_nc_zt=23&_nc_ht=scontent.fbkk13-3.fna&_nc_gid=o1PSD9h5tcUqMHN4WxT6JQ&_nc_ss=7b289&oh=00_Af5rrGGQ0b3mHFSiG1O6YcAo3VJy0EiLcuU1kk32FP9j2g&oe=6A00A49C" alt="โลโก้โรงเรียน" class="school-logo" onerror="this.src='https://via.placeholder.com/100/006633/FFFFFF?text=SRN'">
+            <h2>ระบบทะเบียนและวัดผล</h2>
+            <p>โรงเรียนสุรวิทยาคาร จังหวัดสุรินทร์</p>
+        </div>
+        
+        <div class="search-box">
+            <div class="form-group">
+                <label for="levelSelect">ระดับชั้น</label>
+                <select id="levelSelect">
+                    <option value="" disabled selected>เลือกชั้น...</option>
+                    <option value="ม.1">มัธยมศึกษาปีที่ 1</option>
+                    <option value="ม.2">มัธยมศึกษาปีที่ 2</option>
+                    <option value="ม.3">มัธยมศึกษาปีที่ 3</option>
+                    <option value="ม.4">มัธยมศึกษาปีที่ 4</option>
+                    <option value="ม.5">มัธยมศึกษาปีที่ 5</option>
+                    <option value="ม.6">มัธยมศึกษาปีที่ 6</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="roomSelect">ห้องเรียน</label>
+                <select id="roomSelect">
+                    <option value="" disabled selected>เลือกห้อง...</option>
+                    <script>
+                        for(let i=1; i<=15; i++) {
+                            document.write(`<option value="${i}">ห้อง /${i}</option>`);
+                        }
+                    </script>
+                </select>
+            </div>
+            <button class="btn-search" onclick="searchSubjects()">ค้นหารายวิชา</button>
+        </div>
+
+        <div id="result-section">
+            <h3 class="result-title" id="displayTitle">ผลการค้นหา</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th width="20%">รหัส</th>
+                        <th width="45%">วิชา (คลิกเพื่อเข้าเรียน)</th>
+                        <th width="35%">ครูผู้สอน</th>
+                    </tr>
+                </thead>
+                <tbody id="subjectTableBody">
+                    <!-- ข้อมูลจะแสดงตรงนี้ -->
+                </tbody>
+            </table>
+            <div id="emptyMessage" class="empty-state" style="display: none;">
+                ไม่พบข้อมูลรายวิชาสำหรับห้องเรียนนี้
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const courseData = [
+            {
+                "teacher": "นายกันตินันท์ คุณมาศ",
+                "courseCode": "ค23201",
+                "courseName": "คณิตศาสตร์", 
+                "level": "ม.3",
+                "rooms": ["1", "2", "3", "4"],
+                "link": "https://script.google.com/macros/s/AKfycbwRQNbg4LEaUel02JclvBBqwATZ7jeBZSncP8UYgy0R4tAmfIuMOX2rU23fSHsFz6YEew/exec"
+            }
+        ];
+
+        function searchSubjects() {
+            const level = document.getElementById('levelSelect').value;
+            const room = document.getElementById('roomSelect').value;
+
+            if (!level || !room) {
+                alert("กรุณาเลือกระดับชั้นและห้องเรียนให้ครบถ้วน");
+                return;
+            }
+
+            document.getElementById('result-section').style.display = "block";
+            document.getElementById('displayTitle').innerText = `รายวิชาของ ชั้น${level}/${room}`;
+
+            const filteredSubjects = courseData.filter(subject => {
+                return subject.level === level && subject.rooms.includes(room);
+            });
+
+            const tableBody = document.getElementById('subjectTableBody');
+            const emptyMessage = document.getElementById('emptyMessage');
+            
+            tableBody.innerHTML = "";
+
+            if (filteredSubjects.length > 0) {
+                emptyMessage.style.display = "none";
+                filteredSubjects.forEach(subject => {
+                    let courseDisplay = subject.courseName;
+                    
+                    if (subject.link && subject.link !== "") {
+                        courseDisplay = `<a href="${subject.link}" target="_blank" class="subject-link">${subject.courseName}</a>`;
+                    }
+
+                    const row = `
+                        <tr>
+                            <td style="color: var(--text-secondary); font-family: ui-monospace, monospace; font-weight: 500;">${subject.courseCode}</td>
+                            <td>${courseDisplay}</td>
+                            <td style="color: var(--text-secondary);">${subject.teacher}</td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+            } else {
+                emptyMessage.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
